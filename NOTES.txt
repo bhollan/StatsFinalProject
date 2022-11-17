@@ -1,0 +1,55 @@
+
+
+1. load and clean
+
+
+ load two datasets - elecction results, and redistricting
+
+1.1  Redistricting data (ger) -- BRAD_17nov
+ 
+ # drop States that only have 1 district have "n/a" for "institution"
+
+ # Clean the drawn by column according to institution
+ 
+ # In the gerry data, create election year column that assigns the state's redistricting with an individual.
+ 
+ # Which state-elections have changed maps in the middle of a cycle? 
+ 
+ # Create dummy variables for Institution/drawnby?
+ 
+# See where/why they were different
+
+
+ 
+1.2 Election data
+
+
+
+
+##########################################################################
+
+
+2. Census data needed:
+	
+	Registered voters OR
+	Voting-age population
+
+
+BRIAN:
+	Clean and Merge the Census data
+	Find why NAs are coming from Institution column in ‘merged’ DF (DC)
+	Write presentation draft
+    Hypothesis: "redistricting method/policy has an affect on turnout"
+	Email prof about "audience assumptions" re:gerrymandering
+
+
+Data cleaning
+Why are we breaking out by party at all?
+
+KUMAR:
+	Move everything from Google Drive into GitHub (anything under 100Mb is fine)
+
+
+Future work:
+	Turnout by party
+	Turnout by party assuming “drawn_by” for in/out-party elections
