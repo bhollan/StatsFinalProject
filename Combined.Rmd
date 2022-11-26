@@ -243,7 +243,7 @@ The following code uses the tidycensus package and the Census API to download da
 
 # Declare parameters - API key, variables, time
 
-census_api_key("2f1473c692f61175605ea04cbe2a9a1b41d5bf7c")
+census_api_key("YOUR KEY")
 
 race_vars <- c("P003001", "P003002", "P003003")
 
