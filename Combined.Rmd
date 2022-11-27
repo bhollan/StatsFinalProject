@@ -284,15 +284,15 @@ Census characteristics - AVERAGES?
 
 ```{r}
 ## democratic votes
-election_map2<-merge(allst2, df, by.x = "NAME", by.y = "state" )
-election_map2 %>% mutate(dpct = demv/turnout) %>%
+election_map<-merge(allst2, df, by.x = "NAME", by.y = "state" )
+election_map %>% mutate(dpct = demv/turnout) %>%
   ggplot() + 
   geom_sf(aes(color = dpct, fill = dpct)) 
 ```
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 ## Republican votes
-election_map2 %>% mutate(rpct = repv/turnout) %>%
+election_map %>% mutate(rpct = repv/turnout) %>%
   ggplot(aes(fill = rpct)) + 
   geom_sf() +
   scale_fill_viridis_c(option = "viridis")
