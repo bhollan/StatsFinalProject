@@ -18,10 +18,10 @@ options(tigris_use_cache = TRUE)
 #  load two datasets - election results, and redistricting
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-elec <- read.csv("D:/Work/Georgetown/acad/acel stats/proj/election data/state/1976-2020-house.csv", stringsAsFactors = FALSE)
+elec <- read.csv("/Users/Chuyuan/Downloads/1976-2020-house.csv", stringsAsFactors = FALSE)
 
 
-redistricting_raw <- read.csv("D:/Work/Georgetown/acad/acel stats/proj/StatesAndCyclesData_production-220823c.csv", stringsAsFactors = FALSE)
+redistricting_raw <- read.csv("/Users/Chuyuan/Downloads/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 ```
 
 \
@@ -53,9 +53,7 @@ problem_states <- redistricting_raw %>%
   filter(n > 3) %>%
   select(State) %>%
   pull(State)
-
 problem_states
-
 ```
 
 \
@@ -104,7 +102,7 @@ redistricting %>%
   select(State, Drawn.by, Year, Start.Date, End.Date)
 ```
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message = FALSE, warning=FALSE}
 # Adding various dichotomous dummy variables (1 for mathces, 0 otherwise)
 # legislature: Drawn.by == "Legislature"
 # partisan: Drawn by legislature or politician commission
@@ -150,11 +148,12 @@ Groupby/ aggregate and summarize district-level data to state level data.
   # drop  single dist states  
     
   # Vary from year?
- single_dists <- c("AK", "DE", "MT", "ND", "SD", "VT", "WY")
+single_dists <- c("AK", "DE", "MT", "ND", "SD", "VT", "WY")
 
 elec <- elec %>%
   filter(year >= 2000) %>%
   filter(!state_po %in% single_dists)
+
 
 
 
@@ -170,6 +169,8 @@ elec <- elec %>%
     party=="REPUBLICAN" ~ "REPUBLICAN",
     TRUE ~ as.character('OTHER'))) 
 
+# need GEOID to merge with census map
+#elec$GEOID <- paste(elec$state_fips, elec$district, sep = "")
 
 # Pivot wide - column for party totals
 votes <- elec %>% pivot_wider(names_from = party2, values_from = candidatevotes) %>%
@@ -182,10 +183,8 @@ votes$turnout <- votes$DEMOCRAT+votes$REPUBLICAN+votes$OTHER
 # Data now is at State-Year-Many districts - 
 # aggregate statistics for all districts to one observation for state
 
-votes <- votes %>%  group_by(state_po, year) %>% 
-  summarize(demv = sum(DEMOCRAT), repv = sum(REPUBLICAN), othv = sum(OTHER), turnout = sum(turnout)) 
-
-
+votes <- votes %>%  group_by(state_po, state, year) %>%
+  summarize(demv = sum(DEMOCRAT), repv = sum(REPUBLICAN), othv = sum(OTHER), turnout = sum(turnout))
 
 # create new "map_year" column in elec df as year-1 rounded to 10s
 # the year in which the map for that election was drawn
@@ -193,9 +192,6 @@ votes <- votes %>%
   mutate(map_year = case_when(
     year <= 2010 ~ 2000,
    year>2010 ~ 2010))
-
-
-
 ```
 
 # Merge 
@@ -205,16 +201,16 @@ Merge the *Redistricting* and *Votes* datasets, on two keys: State and Map-Year
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
-df<- votes %>%   left_join(redistricting, by = c("state_po" = "State", "map_year" = "Cycle.Year"))
+df <- votes %>%   left_join(redistricting, by = c("state_po" = "State", "map_year" = "Cycle.Year"))
 
 
 # Just cleaning it a bit for regression
 
 
-df <- df %>% mutate(othv2=ifelse(is.na(othv), 0, othv))
+df<- df %>% mutate(othv2=ifelse(is.na(othv), 0, othv))
                   
 df$turnout2 <- df$othv2 + df$demv + df$repv
-
+#df
 ```
 
 
@@ -286,22 +282,129 @@ Vote shares and competitiveness - MAP/LINEPLOT
 
 Census characteristics - AVERAGES?
 
+```{r}
+## democratic votes
+election_map2<-merge(allst2, df, by.x = "NAME", by.y = "state" )
+election_map2 %>% mutate(dpct = demv/turnout) %>%
+  ggplot() + 
+  geom_sf(aes(color = dpct, fill = dpct)) 
+```
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-
-
+## Republican votes
+election_map2 %>% mutate(rpct = repv/turnout) %>%
+  ggplot(aes(fill = rpct)) + 
+  geom_sf() +
+  scale_fill_viridis_c(option = "viridis")
 ```
+
+```{r, echo=TRUE, message =FALSE, warning=FALSE}
+
+## This only shows 4 instutions
+#election_map2<-merge(allst2, df, by.x = "NAME", by.y = "state" )
+#election_map2 %>% group_by(map_year = "2000") %>%
+  #ggplot(aes(fill = Institution)) + geom_sf(color = NA)  
+
+## 
+
+#install.packages("mapproj")
+library(maps)
+library(R.utils)
+usa <- map_data("state")
+df$state<- tolower(df$state)
+df$state<- capitalize(df$state)
+election_map2 <- merge(usa, df, by.x = "region", by.y = "state")
+
+## 2000-2010
+election_map2 %>%
+  group_by(map_year = "2000") %>%
+  arrange(group, order) %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = Institution)) +
+  geom_polygon(colour = "black") +
+  coord_map("polyconic")
+
+## 2010-2020
+election_map2 %>%
+  group_by(map_year = "2010") %>%
+  arrange(group, order) %>%
+  ggplot(aes(x = long, y = lat, group = group, fill = Institution)) +
+  geom_polygon(colour = "black") +
+  coord_map("polyconic")
+```
+
 
 # Regressions
 
 Turnout percent into 
 
-``` {r}
+``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+## create turnout_df
+x <- aggregate(turnout ~ year, votes, sum)
+y <- aggregate(demv ~ year, votes, sum)
+z <-aggregate(repv ~ year, votes, sum)
+turnout_df <- data.frame(x,y,z)
+turnout_df <- select(turnout_df, -year.1, -year.2)
 
+## combine demv and repv in one column
+df2 <- pivot_longer(turnout_df, demv:repv, names_to = "party", values_to = "partyvotes")
 
+## create turnout percent visual
+df2 %>%
+  mutate(vote_pct = partyvotes/turnout) %>%
+  ggplot(aes(x=year, y = vote_pct, colour = party)) + 
+  geom_line(size = 0.5) + 
+  labs(title = "Dem and Rep voter turnout from 2000-2020", x = "year", y = "percentage of vote by party") + 
+  scale_colour_manual(values = c("#56B4E9", "#FF9999"),
+                    guide = guide_legend(reverse = TRUE),
+                    labels=c("dem_pct","rep_pct")) +
+  theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
 
+```{r, echo=TRUE, message =FALSE, warning=FALSE}
+## create pie chart show Institution proportion in 2000-2010
+library(scales)
+count <- df %>% group_by(map_year) %>%
+       filter(map_year == "2000") %>%
+       count(Institution)
+count %>% 
+  mutate(prop = n/sum(n)) %>%
+  ggplot(aes(x="", y=n, fill=Institution)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  coord_polar("y", start=0) +
+  geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=3) +
+  labs(x = NULL, y = NULL) +
+  scale_fill_brewer(palette="Pastel2")
+
+## create pie chart show Institution proportion in 2010-2020
+count <- df %>% group_by(map_year) %>%
+       filter(map_year == "2010") %>%
+       count(Institution)
+count %>% 
+  mutate(prop = n/sum(n)) %>%
+  ggplot(aes(x="", y=n, fill=Institution)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  coord_polar("y", start=0) +
+  geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=2) +
+  labs(x = NULL, y = NULL) +
+  scale_fill_brewer(palette="Pastel2")
+```
+
+```{r,echo=TRUE, message =FALSE, warning=FALSE}
+## The effect of each institution on the share of the Democratic vote
+df %>%
+  mutate(dpct = demv/turnout) %>%
+  ggplot(aes(x= year, y = dpct, colour = Drawn.by)) +
+      geom_point() +
+      labs(title="Title")
+## Major contributors to encouraging Democratic votes are legislative, politician committees, state courts (2000-2010),andindependent commision (2010-2020).
 
 
-
+## The effect of each institution on the share of the Republican vote
+df %>%
+  mutate(rpct = repv/turnout) %>%
+  ggplot(aes(x= year, y = rpct, colour = Drawn.by)) +
+      geom_point() +
+      labs(title="Title")
+## Major contributors to encouraging Republican votes are legislative, Federal court, and state courts,and independent commision.
+```
