@@ -18,10 +18,9 @@ options(tigris_use_cache = TRUE)
 #  load two datasets - election results, and redistricting
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-elec <- read.csv("D:/Work/Georgetown/acad/acel stats/proj/election data/state/1976-2020-house.csv", stringsAsFactors = FALSE)
+elec <- read.csv("../1976-2020-house.csv", stringsAsFactors = FALSE)
 
-
-redistricting_raw <- read.csv("D:/Work/Georgetown/acad/acel stats/proj/StatesAndCyclesData_production-220823c.csv", stringsAsFactors = FALSE)
+redistricting_raw <- read.csv("../StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 ```
 
 \
@@ -60,7 +59,7 @@ problem_states
 
 \
 
-Finally putting the puzzle together/trimming the excess map-election pairs:
+Finally putting the puzzle together and trimming the excess map-election pairs:
  This...
 1. Identifies problem states (probably not even necessary, but being thorough)
 2. For problem states, finds the maps where:
@@ -136,9 +135,7 @@ redistricting %>%
 
 
 Keep only for required span - 2000 to 2020
-
 Drop states with only one Congressional district. 
-
 Then, convert the party variable to have only three categories - Republican, Democrat and Other. Pivot to wide, and get vote totals and shares.
 
 Groupby/ aggregate and summarize district-level data to state level data.
@@ -157,12 +154,10 @@ elec <- elec %>%
   filter(!state_po %in% single_dists)
 
 
-
-
 ############################################################
 # Aggregation
 
-# Gen new party2 variable
+# Generate new party2 variable
 
 elec <- elec %>%
   mutate(party2 = case_when(
@@ -177,24 +172,20 @@ votes <- elec %>% pivot_wider(names_from = party2, values_from = candidatevotes)
                                   TRUE ~as.numeric(as.character(.)))))
 
 # total turnout column
-votes$turnout <- votes$DEMOCRAT+votes$REPUBLICAN+votes$OTHER
+votes$turnout <- votes$DEMOCRAT + votes$REPUBLICAN + votes$OTHER
 
 # Data now is at State-Year-Many districts - 
-# aggregate statistics for all districts to one observation for state
+# aggregate statistics for all districts to one observation per state
 
 votes <- votes %>%  group_by(state_po, year) %>% 
   summarize(demv = sum(DEMOCRAT), repv = sum(REPUBLICAN), othv = sum(OTHER), turnout = sum(turnout)) 
-
-
 
 # create new "map_year" column in elec df as year-1 rounded to 10s
 # the year in which the map for that election was drawn
 votes <- votes %>%
   mutate(map_year = case_when(
-    year <= 2010 ~ 2000,
-   year>2010 ~ 2010))
-
-
+              year <= 2010 ~ 2000,
+              year>2010 ~ 2010))
 
 ```
 
@@ -242,8 +233,8 @@ The following code uses the tidycensus package and the Census API to download da
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
 # Declare parameters - API key, variables, time
-
-census_api_key("YOUR KEY")
+key <- Sys.getenv(CENSUS_API_KEY)   # from .Renviron file
+census_api_key(key)
 
 race_vars <- c("P003001", "P003002", "P003003")
 
