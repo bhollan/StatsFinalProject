@@ -11,6 +11,7 @@ output:
 library(tidycensus)
 library(tidyverse)
 library(data.table)
+library(readxl)
 options(tigris_use_cache = TRUE)
 ```
 
@@ -223,18 +224,16 @@ The following code uses the tidycensus package and the Census API to download da
 
 - Reshape to wide, rename variables.
 
-- Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii.
+- Subset to US mainland; filter out Alaska, Hawaii, and Puerto Rico.
 
 - Generate a variable of percent black
 
 - Plot map
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
-
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 # Declare parameters - API key, variables, time
-key <- Sys.getenv(CENSUS_API_KEY)   # from .Renviron file
-census_api_key(key)
+census_api_key(keyring::key_get("census_api_key"))
 
 race_vars <- c("P003001", "P003002", "P003003")
 
@@ -256,7 +255,7 @@ allst2 <- spread(allst, variable, value)
 
 setnames(allst2, old = c("P003001", "P003002", "P003003"), new = c('tot_pop','white_pop','black_pop'))
 
-allst2 <- allst2 %>% filter(NAME!="Puerto Rico", NAME!="Alaska", NAME!="Hawaii" )
+allst2 <- allst2 %>% filter(NAME!="Puerto Rico", NAME!="Alaska", NAME!="Hawaii")
 
 allst2$black_perc <- allst2$black_pop/allst2$tot_pop
 
@@ -267,6 +266,22 @@ allst2 %>% ggplot(aes(fill = black_perc)) + geom_sf(color = NA) +
 
 
 ## Join Eligible voters data 
+Census data was available for the current census and historical data (separated).
+Current data is combined, historical data is by presidential/midterms.
+We import the relevant cells from the Excel sheets and merge them as needed.
+
+
+```{r}
+
+combined_2020 <- read_excel("../source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
+names(combined_2020) <- c("Sate", "population", "citizens", "registered", "registered_percent")
+
+prez_wide_A <- read_excel("../source_data/VoteAndRegByStateHistory_prezA.xlsx")
+prez_wide_B <- read_excel("../source_data/VoteAndRegByStateHistory_prezB.xlsx")
+
+```
+
+
 
 # Descriptive results
 
