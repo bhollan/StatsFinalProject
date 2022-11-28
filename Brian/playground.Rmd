@@ -197,14 +197,15 @@ Merge the *Redistricting* and *Votes* datasets, on two keys: State and Map-Year
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
-df<- votes %>%   left_join(redistricting, by = c("state_po" = "State", "map_year" = "Cycle.Year"))
+df <- votes %>% 
+  left_join(redistricting, by = c("state_po" = "State", "map_year" = "Cycle.Year"))
+
+# Cleaning for regression
 
 
-# Just cleaning it a bit for regression
+df <- df %>%
+  mutate(othv2=ifelse(is.na(othv), 0, othv))
 
-
-df <- df %>% mutate(othv2=ifelse(is.na(othv), 0, othv))
-                  
 df$turnout2 <- df$othv2 + df$demv + df$repv
 
 ```
@@ -255,12 +256,14 @@ allst2 <- spread(allst, variable, value)
 
 setnames(allst2, old = c("P003001", "P003002", "P003003"), new = c('tot_pop','white_pop','black_pop'))
 
-allst2 <- allst2 %>% filter(NAME!="Puerto Rico", NAME!="Alaska", NAME!="Hawaii")
+allst2 <- allst2 %>% 
+  filter(NAME!="Puerto Rico", NAME!="Alaska", NAME!="Hawaii")
 
 allst2$black_perc <- allst2$black_pop/allst2$tot_pop
 
 
-allst2 %>% ggplot(aes(fill = black_perc)) + geom_sf(color = NA) + 
+allst2 %>% ggplot(aes(fill = black_perc)) + 
+  geom_sf(color = NA) + 
   scale_fill_viridis_c(option = "viridis") 
 ```
 
@@ -276,8 +279,7 @@ We import the relevant cells from the Excel sheets and merge them as needed.
 combined_2020 <- read_excel("../source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
 names(combined_2020) <- c("Sate", "population", "citizens", "registered", "registered_percent")
 
-prez_wide_A <- read_excel("../source_data/VoteAndRegByStateHistory_prezA.xlsx")
-prez_wide_B <- read_excel("../source_data/VoteAndRegByStateHistory_prezB.xlsx")
+prez_wide_reg <- read_excel("../source_data/VoteAndRegByStateHistory_prez_reg.xlsx")
 
 ```
 
