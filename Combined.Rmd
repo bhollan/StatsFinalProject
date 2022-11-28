@@ -239,7 +239,7 @@ The following code uses the tidycensus package and the Census API to download da
 
 # Declare parameters - API key, variables, time
 
-census_api_key("d4a5cd2bc5689952c34ccbf541719958538f8ea5")
+census_api_key("YOUR KEY")
 
 race_vars <- c("P003001", "P003002", "P003003")
 
@@ -300,7 +300,7 @@ election_map %>% mutate(dpct = demv/turnout) %>%
 election_map %>% mutate(rpct = repv/turnout) %>%
   ggplot(aes(fill = rpct)) + 
   geom_sf() +
-  scale_fill_viridis_c(option = "viridis")
+  scale_fill_viridis_c(option = "red",begin = 0.1)
 ```
 
 ```{r, echo=TRUE, message =FALSE, warning=FALSE}
@@ -377,7 +377,7 @@ count %>%
   ggplot(aes(x="", y=n, fill=Institution)) +
   geom_bar(stat="identity", width=1, color="black") +
   coord_polar("y", start=0) +
-  geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=3) +
+  geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=2.5) +
   labs(x = NULL, y = NULL) +
   scale_fill_brewer(palette="Pastel2")
 
@@ -400,7 +400,7 @@ count %>%
 df %>%
   mutate(dpct = demv/turnout) %>%
   ggplot(aes(x= year, y = dpct, colour = Drawn.by)) +
-      geom_point() +
+      geom_point(size = 1) +
       labs(title="Title")
 ## Major contributors to encouraging Democratic votes are legislative, politician committees, state courts (2000-2010),andindependent commision (2010-2020).
 
@@ -409,7 +409,7 @@ df %>%
 df %>%
   mutate(rpct = repv/turnout) %>%
   ggplot(aes(x= year, y = rpct, colour = Drawn.by)) +
-      geom_point() +
+      geom_point(size = 1) +
       labs(title="Title")
 ## Major contributors to encouraging Republican votes are legislative, Federal court, and state courts,and independent commision.
 ```
