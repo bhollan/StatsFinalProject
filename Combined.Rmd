@@ -239,7 +239,7 @@ The following code uses the tidycensus package and the Census API to download da
 
 # Declare parameters - API key, variables, time
 
-census_api_key("YOUR KEY")
+census_api_key("d4a5cd2bc5689952c34ccbf541719958538f8ea5")
 
 race_vars <- c("P003001", "P003002", "P003003")
 
@@ -284,15 +284,20 @@ Census characteristics - AVERAGES?
 
 ```{r}
 ## democratic votes
-election_map2<-merge(allst2, df, by.x = "NAME", by.y = "state" )
-election_map2 %>% mutate(dpct = demv/turnout) %>%
+library(R.utils)
+df$state<- tolower(df$state)
+df$state<- capitalize(df$state)
+
+election_map<-merge(allst2, df, by.x = "NAME", by.y = "state" )
+
+election_map %>% mutate(dpct = demv/turnout) %>%
   ggplot() + 
   geom_sf(aes(color = dpct, fill = dpct)) 
 ```
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 ## Republican votes
-election_map2 %>% mutate(rpct = repv/turnout) %>%
+election_map %>% mutate(rpct = repv/turnout) %>%
   ggplot(aes(fill = rpct)) + 
   geom_sf() +
   scale_fill_viridis_c(option = "viridis")
@@ -300,19 +305,18 @@ election_map2 %>% mutate(rpct = repv/turnout) %>%
 
 ```{r, echo=TRUE, message =FALSE, warning=FALSE}
 
-## This only shows 4 instutions
+## This only shows 4 institutions
 #election_map2<-merge(allst2, df, by.x = "NAME", by.y = "state" )
 #election_map2 %>% group_by(map_year = "2000") %>%
   #ggplot(aes(fill = Institution)) + geom_sf(color = NA)  
 
-## 
+## Another way
 
 #install.packages("mapproj")
 library(maps)
-library(R.utils)
 usa <- map_data("state")
-df$state<- tolower(df$state)
-df$state<- capitalize(df$state)
+usa$region <- capitalize(usa$region)
+
 election_map2 <- merge(usa, df, by.x = "region", by.y = "state")
 
 ## 2000-2010
@@ -330,6 +334,7 @@ election_map2 %>%
   ggplot(aes(x = long, y = lat, group = group, fill = Institution)) +
   geom_polygon(colour = "black") +
   coord_map("polyconic")
+
 ```
 
 
@@ -408,3 +413,4 @@ df %>%
       labs(title="Title")
 ## Major contributors to encouraging Republican votes are legislative, Federal court, and state courts,and independent commision.
 ```
+  
