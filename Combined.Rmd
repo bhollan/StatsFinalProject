@@ -18,10 +18,15 @@ options(tigris_use_cache = TRUE)
 #  load two datasets - election results, and redistricting
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-elec <- read.csv("/Users/Chuyuan/Downloads/1976-2020-house.csv", stringsAsFactors = FALSE)
 
+elec <- read.csv("/Users/scrubscrub/stats1/StatsFinalProject/1976-2020-house.csv", stringsAsFactors = FALSE)
+head(elec)
 
-redistricting_raw <- read.csv("/Users/Chuyuan/Downloads/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
+redistricting_raw <- read.csv("/Users/scrubscrub/stats1/StatsFinalProject/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
+head(redistricting_raw)
+
+#elec <- read.csv("/Users/Chuyuan/Downloads/1976-2020-house.csv", stringsAsFactors = FALSE)
+#redistricting_raw <- read.csv("/Users/Chuyuan/Downloads/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 ```
 
 \
@@ -83,6 +88,8 @@ redistricting_joined <- full_join(redistricting_raw, cycle_pairs, by = "Cycle.Ye
          Start.Date = ifelse((Start.Date == "") & (Seats == 1), "2001-12-31", Start.Date),
          End.Date = ifelse((End.Date == "") & (Seats == 1), "2001-12-31", End.Date))
 
+#view(redistricting_joined)
+
 # Finally putting the puzzle together/trimming the excess map-election pairs:
 # This...
 # 1. Identifies problem states (probably not even necessary, but being thorough)
@@ -100,6 +107,7 @@ redistricting <- redistricting_joined %>%
 redistricting %>%
   filter(State %in% problem_states) %>%
   select(State, Drawn.by, Year, Start.Date, End.Date)
+
 ```
 
 ```{r , echo=TRUE, message = FALSE, warning=FALSE}
@@ -125,7 +133,7 @@ redistricting <- redistricting %>%
 redistricting %>%
   select(Year, State, Drawn.by, legislature, partisan, independent_commission, court, mid_term)
 
-
+#view(redistricting)
 ```
 
 \
@@ -192,6 +200,8 @@ votes <- votes %>%
   mutate(map_year = case_when(
     year <= 2010 ~ 2000,
    year>2010 ~ 2010))
+
+#view(votes)
 ```
 
 # Merge 
@@ -210,7 +220,7 @@ df <- votes %>%   left_join(redistricting, by = c("state_po" = "State", "map_yea
 df<- df %>% mutate(othv2=ifelse(is.na(othv), 0, othv))
                   
 df$turnout2 <- df$othv2 + df$demv + df$repv
-#df
+#view(df)
 ```
 
 
@@ -239,7 +249,7 @@ The following code uses the tidycensus package and the Census API to download da
 
 # Declare parameters - API key, variables, time
 
-census_api_key("YOUR KEY")
+census_api_key("858d681fdc0a9574c3a9fab6d88774cb58fba2f2")
 
 race_vars <- c("P003001", "P003002", "P003003")
 
@@ -270,11 +280,13 @@ allst2 %>% ggplot(aes(fill = black_perc)) + geom_sf(color = NA) +
   scale_fill_viridis_c(option = "viridis") 
 ```
 
-
 ## Join Eligible voters data 
+Census data was available for the current census and historical data (separated).
+Current data is combined, historical data is by presidential/midterms.
+We import the relevant cells from the Excel sheets and merge them as needed.
+
 
 # Descriptive results
-
 
 Redistricting MAP
 
@@ -282,6 +294,9 @@ Vote shares and competitiveness - MAP/LINEPLOT
 
 Census characteristics - AVERAGES?
 
+# Visualization
+
+##Maps
 ```{r}
 ## democratic votes
 library(R.utils)
@@ -292,7 +307,10 @@ election_map<-merge(allst2, df, by.x = "NAME", by.y = "state" )
 
 election_map %>% mutate(dpct = demv/turnout) %>%
   ggplot() + 
-  geom_sf(aes(color = dpct, fill = dpct)) 
+  geom_sf(aes(color = dpct, fill = dpct))+
+  labs(title = "Democratic Votes by State")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), #moves title to the middle of graph, bolds it
+          text= element_text(family= "Times", size = ))
 ```
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
@@ -300,7 +318,10 @@ election_map %>% mutate(dpct = demv/turnout) %>%
 election_map %>% mutate(rpct = repv/turnout) %>%
   ggplot(aes(fill = rpct)) + 
   geom_sf() +
-  scale_fill_viridis_c(option = "red",begin = 0.1)
+  scale_fill_viridis_c(option = "red",begin = 0.1)+
+  labs(title = "Republican Votes by State")+
+  theme(plot.title = element_text(hjust=0.5, face="bold"), #moves title to the middle of graph, bolds it
+          text= element_text(family= "Times", size = ))
 ```
 
 ```{r, echo=TRUE, message =FALSE, warning=FALSE}
@@ -325,7 +346,10 @@ election_map2 %>%
   arrange(group, order) %>%
   ggplot(aes(x = long, y = lat, group = group, fill = Institution)) +
   geom_polygon(colour = "black") +
-  coord_map("polyconic")
+  coord_map("polyconic")+
+  labs(title = "Redistricting Institution by State (2000-2010)")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"),
+          text= element_text(family= "Times", size = ))
 
 ## 2010-2020
 election_map2 %>%
@@ -333,15 +357,40 @@ election_map2 %>%
   arrange(group, order) %>%
   ggplot(aes(x = long, y = lat, group = group, fill = Institution)) +
   geom_polygon(colour = "black") +
-  coord_map("polyconic")
+  coord_map("polyconic")+
+  labs(title = "Redistricting Institution by State (2010-2020)")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), 
+          text= element_text(family= "Times", size = ))
 
+
+```
+-could make another map graphic that only highlights states that changed from 2000 to 2010
+
+##Average Turnout for Each Institution
+- once registered voters is merged, should look instead at percentage of eligible voters who  actually voted instead of just overall turnout
+``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+#group by institution and get average turnout, dataframe = df
+institution_mean <- df %>%
+  group_by(Institution)%>%
+  summarize(average_turnout = mean(x= turnout2))
+
+institution_mean
+
+ggplot(institution_mean, aes(x = Institution, y = average_turnout))+ 
+  geom_col()+
+  labs(title = "Average Voter Turnout Per Institution", 
+       y= "Average Turnout") +
+  theme_minimal() +
+  theme(plot.title =element_text(hjust=0.5, face="bold"), #moves title to the middle of graph, bolds it
+            plot.subtitle= element_text(hjust=0.5), 
+            text= element_text(family= "Times", size = ))
+
+ 
 ```
 
 
-# Regressions
-
 Turnout percent into 
-
+## Dem and Rep vote percentage over time
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 ## create turnout_df
 x <- aggregate(turnout ~ year, votes, sum)
@@ -365,7 +414,7 @@ df2 %>%
   theme(plot.title = element_text(hjust = 0.5)) 
 ```
 
-
+##Proportion of Insitutions 
 ```{r, echo=TRUE, message =FALSE, warning=FALSE}
 ## create pie chart show Institution proportion in 2000-2010
 library(scales)
@@ -379,7 +428,10 @@ count %>%
   coord_polar("y", start=0) +
   geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=2.5) +
   labs(x = NULL, y = NULL) +
-  scale_fill_brewer(palette="Pastel2")
+  scale_fill_brewer(palette="Pastel2")+
+  labs(title = "Institution Proportion (2000-2010")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), 
+          text= element_text(family= "Times", size = ))
 
 ## create pie chart show Institution proportion in 2010-2020
 count <- df %>% group_by(map_year) %>%
@@ -392,16 +444,34 @@ count %>%
   coord_polar("y", start=0) +
   geom_text(aes(x=1.4, label=percent(prop)), position=position_stack(vjust=0.5), size=2) +
   labs(x = NULL, y = NULL) +
-  scale_fill_brewer(palette="Pastel2")
+  scale_fill_brewer(palette="Pastel2")+
+  labs(title = "Institution Proportion (2010-2020)")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), 
+          text= element_text(family= "Times", size = ))
+
 ```
 
+##Effect of institution on the share of party votes
+-make a similar graph for the effect of each institution on percentage of registered voters who voted
 ```{r,echo=TRUE, message =FALSE, warning=FALSE}
+
+## The effect of each institution on the percentage of registered voters who voted
+# df %>%
+#   #get data on registered voters
+#   mutate(voterpct = turnout/REGISTEREDVOTERS) %>%
+#   ggplot(aes(x= year, y = voterpct, colour = Drawn.by)) +
+#       geom_point(size = 1) +
+#       labs(title="Title")
+
 ## The effect of each institution on the share of the Democratic vote
 df %>%
   mutate(dpct = demv/turnout) %>%
   ggplot(aes(x= year, y = dpct, colour = Drawn.by)) +
       geom_point(size = 1) +
-      labs(title="Title")
+      labs(title = "Share of Democrat Votes per Redistricting Commission",
+           x = "Year", y = "Democrat Vote Percentage")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), 
+          text= element_text(family= "Times", size = ))
 ## Major contributors to encouraging Democratic votes are legislative, politician committees, state courts (2000-2010),andindependent commision (2010-2020).
 
 
@@ -410,7 +480,13 @@ df %>%
   mutate(rpct = repv/turnout) %>%
   ggplot(aes(x= year, y = rpct, colour = Drawn.by)) +
       geom_point(size = 1) +
-      labs(title="Title")
+      labs(title = "Share of Republican Votes per Redistricting Commission",
+           x = "Year", y = "Republican Vote Percentage")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), 
+          text= element_text(family= "Times", size = ))
 ## Major contributors to encouraging Republican votes are legislative, Federal court, and state courts,and independent commision.
 ```
   
+#Regression 
+
+
