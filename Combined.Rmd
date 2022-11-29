@@ -19,14 +19,12 @@ options(tigris_use_cache = TRUE)
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
-elec <- read.csv("/Users/scrubscrub/stats1/StatsFinalProject/1976-2020-house.csv", stringsAsFactors = FALSE)
+elec <- read.csv("./source_data/1976-2020-house.csv", stringsAsFactors = FALSE)
 head(elec)
 
-redistricting_raw <- read.csv("/Users/scrubscrub/stats1/StatsFinalProject/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
+redistricting_raw <- read.csv("./source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 head(redistricting_raw)
 
-#elec <- read.csv("/Users/Chuyuan/Downloads/1976-2020-house.csv", stringsAsFactors = FALSE)
-#redistricting_raw <- read.csv("/Users/Chuyuan/Downloads/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 ```
 
 \
