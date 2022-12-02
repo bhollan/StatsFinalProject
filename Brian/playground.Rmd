@@ -19,9 +19,9 @@ options(tigris_use_cache = TRUE)
 #  load two datasets - election results, and redistricting
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-elec <- read.csv("../1976-2020-house.csv", stringsAsFactors = FALSE)
+elec <- read.csv("../source_data/1976-2020-house.csv", stringsAsFactors = FALSE)
 
-redistricting_raw <- read.csv("../StatesAndCyclesData.csv", stringsAsFactors = FALSE)
+redistricting_raw <- read.csv("../source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 ```
 
 \
@@ -270,6 +270,7 @@ We import the relevant cells from the Excel sheets and merge them as needed.
 
 # 2020 file has raw populations (others have only percentages)
 raw_2020 <- read_excel("../source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
+
 names(raw_2020) <- c("State", "population", "citizens", "registered", "registered_percent")
 
 # Presidential years (in 'broken' format in excel sheet (printer friendly))
@@ -284,8 +285,6 @@ names(prez_wide) <- c("turnout_state", c(2020, 2016, 2012, 2008, 2004, 2000))
 # MidTerms years (not in 'broken' format)
 rng <- "A7:K58"
 midt_wide_reg <- read_excel("../source_data/VoteAndRegByStateHistory_congress.xlsx", range=rng)
-# rng <- "B74:C124"
-# prez_wide_regB <- read_excel("../source_data/VoteAndRegByStateHistory_prez_reg.xlsx", range=rng)
 
 midt_wide <- data.frame(midt_wide_reg[,seq(1,12,2)])
 names(midt_wide) <- c("turnout_state", c(2018, 2014, 2010, 2006, 2002))

@@ -11,6 +11,7 @@ output:
 library(tidycensus)
 library(tidyverse)
 library(data.table)
+library(readxl)
 options(tigris_use_cache = TRUE)
 ```
 
@@ -157,7 +158,7 @@ Groupby/ aggregate and summarize district-level data to state level data.
 single_dists <- c("AK", "DE", "MT", "ND", "SD", "VT", "WY")
 
 elec <- elec %>%
-  filter(year >= 2000) %>%
+  filter(year >= 2002) %>%
   filter(!state_po %in% single_dists)
 
 
@@ -204,12 +205,11 @@ votes <- votes %>%
 
 # Merge 
 
-
 Merge the *Redistricting* and *Votes* datasets, on two keys: State and Map-Year
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
-df <- votes %>%   left_join(redistricting, by = c("state_po" = "State", "map_year" = "Cycle.Year"))
+df <- votes %>%   left_join(redistricting, by = c("state_po" = "State", "year" = "Year"))
 
 
 # Just cleaning it a bit for regression
@@ -283,6 +283,37 @@ Census data was available for the current census and historical data (separated)
 Current data is combined, historical data is by presidential/midterms.
 We import the relevant cells from the Excel sheets and merge them as needed.
 
+
+```{r echo = FALSE}
+
+# 2020 file has raw populations (others have only percentages)
+raw_2020 <- read_excel("./source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
+
+names(raw_2020) <- c("State", "population", "citizens", "registered", "registered_percent")
+
+# Presidential years (in 'broken' format in excel sheet (printer friendly))
+rng <- "A7:K58"
+prez_wide_regA <- read_excel("./source_data/VoteAndRegByStateHistory_prez_reg.xlsx", range=rng)
+rng <- "B74:C125"
+prez_wide_regB <- read_excel("./source_data/VoteAndRegByStateHistory_prez_reg.xlsx", range=rng)
+
+prez_wide <- data.frame(cbind(prez_wide_regA, prez_wide_regB)[,seq(1,14,2)])
+names(prez_wide) <- c("turnout_state", c(2020, 2016, 2012, 2008, 2004, 2000))
+
+# MidTerms years (not in 'broken' format)
+rng <- "A7:K58"
+midt_wide_reg <- read_excel("./source_data/VoteAndRegByStateHistory_congress.xlsx", range=rng)
+
+midt_wide <- data.frame(midt_wide_reg[,seq(1,12,2)])
+names(midt_wide) <- c("turnout_state", c(2018, 2014, 2010, 2006, 2002))
+
+all_years <- left_join(prez_wide, midt_wide,
+                       by = c("turnout_state" = "turnout_state"))
+
+all_years_long <- pivot_longer(all_years, cols=colnames(all_years)[-1], names_to="turnout_year", values_to="turnout_perc")
+
+
+```
 
 # Descriptive results
 
