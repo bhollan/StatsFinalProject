@@ -18,13 +18,18 @@ options(tigris_use_cache = TRUE)
 
 #  load two datasets - election results, and redistricting
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 elec <- read.csv("./source_data/1976-2020-house.csv", stringsAsFactors = FALSE)
-head(elec)
+# head(elec)
 
 redistricting_raw <- read.csv("./source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
-head(redistricting_raw)
+# head(redistricting_raw)
+
+states <- elec %>%
+    mutate("state_full" = tolower(state)) %>%
+    select("state_full", "state_po") %>%
+    distinct(state_full, state_po)
 
 ```
 
@@ -243,7 +248,7 @@ The following code uses the tidycensus package and the Census API to download da
 - Plot map
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 # Declare parameters - API key, variables, time
 
@@ -284,7 +289,8 @@ Current data is combined, historical data is by presidential/midterms.
 We import the relevant cells from the Excel sheets and merge them as needed.
 
 
-```{r echo = FALSE}
+
+```{r echo=FALSE}
 
 # 2020 file has raw populations (others have only percentages)
 raw_2020 <- read_excel("./source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
@@ -312,8 +318,27 @@ all_years <- left_join(prez_wide, midt_wide,
 
 all_years_long <- pivot_longer(all_years, cols=colnames(all_years)[-1], names_to="turnout_year", values_to="turnout_perc")
 
+all_years_long <- all_years_long %>%
+  mutate(turnout_year = as.numeric(turnout_year),
+         turnout_state = tolower(turnout_state))
 
 ```
+
+
+
+# MERGE
+```{r}
+
+redistricting <- left_join(redistricting, states,
+                           by = c("State" = "state_po")) %>%
+                 mutate(Cycle.Year = as.numeric(Cycle.Year),
+                        state_full = tolower(state_full))
+
+redist_turn <- left_join(redistricting, all_years_long,
+                         by = c("state_full" = "turnout_state", "Cycle.Year" = "turnout_year"))
+
+```
+
 
 # Descriptive results
 
