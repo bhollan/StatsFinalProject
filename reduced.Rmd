@@ -12,6 +12,7 @@ library(tidycensus)
 library(tidyverse)
 library(data.table)
 library(readxl)
+library(stargazer)
 options(tigris_use_cache = TRUE)
 
 ```
@@ -49,7 +50,7 @@ we also need to identify the states that had their maps redrawn due to legal cha
 # Drawn.by column with values from the Institution column as a substitute.
 # It is important to favor the Drawn.by column as it reflects court decisions.
 redistricting_raw <- redistricting_raw %>%
-  filter(Level == "Congress") %>%
+  filter(Level == "Congress", Cycle.Year < 2020) %>%
   mutate(Drawn.by = ifelse(Drawn.by == "", Institution, Drawn.by))
 
 
@@ -57,7 +58,7 @@ redistricting_raw <- redistricting_raw %>%
 # This resulted in them having more than 3 maps (rows) over the period
 problem_states <- redistricting_raw %>%
   count(State) %>%
-  filter(n > 3) %>%
+  filter(n > 2) %>%
   select(State) %>%
   pull(State)
 problem_states
@@ -79,8 +80,7 @@ Finally putting the puzzle together/trimming the excess map-election pairs:
 # also after the maps were sent back to the legislature or redrawn by a court.
 cycle_pairs <- rbind(
   data.frame(Cycle.Year = 2000, Year = c(2002, 2004, 2006, 2008, 2010)),
-  data.frame(Cycle.Year = 2010, Year = c(2012, 2014, 2016, 2018, 2020)),
-  data.frame(Cycle.Year = 2020, Year = 2022))
+  data.frame(Cycle.Year = 2010, Year = c(2012, 2014, 2016, 2018, 2020)))
 
 # Joining the dataframes, creating a dummy variable for year comparisons,
 # and filling in blank values for the dates with an arbitrary date (missing
@@ -105,11 +105,18 @@ redistricting <- redistricting_joined %>%
                            difftime(redistricting_joined$End.Date, Election.Cutoff) < 0, T, F))) %>%
   filter(Inactive == FALSE)
 
+# identifying the states that changed their redistricting methods; adding it in
+redistricting_changes = redistricting %>%
+  group_by(State) %>%
+  summarize(redistricting_methods = n_distinct(Drawn.by)) %>%
+  mutate(changed = ifelse(redistricting_methods > 1, 1, 0))
+
+redistricting <- left_join(redistricting, redistricting_changes)
+
 # Example of what all this nonsense was for
 redistricting %>%
   filter(State %in% problem_states) %>%
-  select(State, Drawn.by, Year, Start.Date, End.Date)
-
+  select(State, Drawn.by, Year, Start.Date, End.Date, changed)
 ```
 
 ```{r , echo=TRUE, message = FALSE, warning=FALSE}
@@ -121,7 +128,6 @@ redistricting %>%
 # midterm: Not a presidential election year
 #
 # to possibly add later:
-#   Whether a state changed to/from a non-partisan method
 #   Whether or not the state had a US Senate election that year
 
 redistricting <- redistricting %>%
@@ -133,7 +139,8 @@ redistricting <- redistricting %>%
          mid_term = ifelse(Year %% 4 == 2, 1, 0))
 
 redistricting %>%
-  select(Year, State, Drawn.by, legislature, partisan, independent_commission, court, mid_term)
+  select(Year, State, Drawn.by, changed, legislature, partisan,
+         independent_commission, court, mid_term, )
 
 # view(redistricting)
 ```
@@ -192,13 +199,68 @@ all_years_long <- all_years_long %>%
 
 # MERGE
 ```{r}
-
 redistricting <- left_join(redistricting, states,
                            by = c("State" = "state_po")) %>%
                  mutate(Cycle.Year = as.numeric(Cycle.Year),
                         state_full = tolower(state_full))
 
 redist_turn <- left_join(redistricting, all_years_long,
-                         by = c("state_full" = "turnout_state", "Cycle.Year" = "turnout_year"))
+                         by = c("state_full" = "turnout_state", "Year" = "turnout_year"))
+```
 
+
+```{r}
+redist_turn_short <- redist_turn %>%
+  select(State, state_full, Year, Drawn.by, changed, Seats, turnout_perc,
+         legislature, partisan, independent_commission, court, mid_term) %>%
+  mutate(turnout_perc = turnout_perc / 100) %>%
+  filter(Seats != 1,
+         Year < 2022)
+
+redist_turn_short %>%
+  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
+  geom_point()
+
+```
+```{r}
+# not sure if it's appropriate to use state as a control
+turnout_regression <- lm(turnout_perc ~ legislature + State + mid_term,
+                         data = redist_turn_short)
+summary(turnout_regression)
+```
+
+
+```{r}
+changed_subset <- redist_turn_short %>%
+  filter(changed == 1) 
+
+legislature_regression <- lm(turnout_perc ~ legislature + mid_term,
+                         data = changed_subset)
+
+court_regression <- lm(turnout_perc ~ court + mid_term,
+                         data = changed_subset)
+
+stargazer(legislature_regression, court_regression, type = "text")
+
+```
+
+
+```{r}
+court_states <- redist_turn_short %>%
+  filter(court == 1) %>%
+  distinct(State) %>%
+  pull()
+
+legislature_states <- redist_turn_short %>%
+  filter(legislature == 1) %>%
+  distinct(State) %>%
+  pull()
+
+court_subset <- redist_turn_short %>%
+  filter(changed == 1, State %in% court_states, State %in% legislature_states)
+
+court_regression2 <- lm(turnout_perc ~ court + mid_term,
+                        data = changed_subset)
+
+summary(court_regression2)
 ```
