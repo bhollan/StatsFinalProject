@@ -22,13 +22,6 @@ options(tigris_use_cache = TRUE)
 ```
 
 
-#  Load the analysis dataset
-
-```{r , echo=TRUE, message=FALSE, warning=FALSE}
-
-redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
-```
-
 # Download census data
 
 
@@ -39,23 +32,24 @@ https://walker-data.com/tidycensus/articles/spatial-data.html
 
 The following code uses the tidycensus package and the Census API to download data + shapefiles from the US Census.
 
-- Declare Census product ( decennial), variables, time and geography.
+- Declare Census product ( decennial).
 
-- Reshape to wide, rename variables.
+- Get values for total population in 2010 (just for an example), by state. Get shapefiles by geometry=True
 
-- Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii.
+- Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii. Convert state names to lowercase
 
 
 
-```{r , echo=TRUE, message=FALSE, warning=FALSE}
+`################
+```{r}
 
-# Declare parameters - API key, variables, time
+#Declare parameters - API key, variables, time
 
 census_api_key("2f1473c692f61175605ea04cbe2a9a1b41d5bf7c")
 
 yr_select <- c(2010)
 
-# call DF
+#call DF
 
 stpop <- get_decennial(geography = "state", 
                         variables = "P003001", 
@@ -66,18 +60,34 @@ stpop <- get_decennial(geography = "state",
 stpop$NAME <- tolower(stpop$NAME) 
 
 
+###############################
+
+```
+
+#  Load and merge with analysis data
+
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
+
+redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
+
+
+election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
+
 
 ```
 
 
-#Now merge our analysis df with this census shapefile
+
+## Maps - Redistricting policy
+
+- Subset first to any year, say, 2012
 
 -could make another map graphic that only highlights states that changed from 2000 to 2010
 
 
+
 ```{r, warning=FALSE}
 
-election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
 
 
 #idvars = c("NAME", "GEOID", "geometry")
@@ -107,7 +117,7 @@ map2012 %>%
 - once registered voters is merged, should look instead at percentage of eligible voters who  actually voted instead of just overall turnout
 
 
-##Average Turnout - lineplot
+## Turnout - lineplot thru time, by institution
 
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
@@ -135,6 +145,8 @@ inst_lineplt %>%
 
 
 ```
+
+## Turnout - lineplot thru time, by institution - midterms vs presidential elections
 
 
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
@@ -170,8 +182,15 @@ prez %>%
 
 
   
-#Regression 
+# Regression 
 
+Our main independent variable derives from the 'Institution' or 'Drawn.By' columns. Several options:
+
+1. Categorical/factor variable
+
+2. Get dummies for each category (court, legislature, independent etc)
+
+3. Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
 
 
 ``` {r}
