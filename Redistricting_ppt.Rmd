@@ -96,7 +96,7 @@ df <- read_csv("analysis_data")
 
 - Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
-Generally speaking "vote share should be close to seat share"
+Generally speaking, vote share should be close to seat share. If not, that's a serious anti-democratic issue
 
 
 
