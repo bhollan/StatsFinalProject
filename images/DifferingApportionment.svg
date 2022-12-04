@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 225 425" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <path id="r" d="m0,0h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z m-10.7,10.7h10v10h-10z m10.7,0h10v10h-10z"/>
+    <g id="set">
+      <use xlink:href="#r" fill="#ffc20a"/>
+      <use xlink:href="#r" transform="translate(21.4)" fill="#0c7bdc"/>
+      <use xlink:href="#r" transform="translate(32.1)" fill="#0c7bdc"/>
+    </g>
+  </defs>
+  <rect opacity="0" width="225" height="425"/>
+  <g font-family="DejaVu Sans" font-size="7.5">
+    <switch transform="translate(105 12)" text-anchor="middle">
+      <text systemLanguage="fr">Gerrymandering : dessiner différentes cartes pour<tspan x="0" dy="11">les circonscriptions produit des résultats différents</tspan></text>
+      <text systemLanguage="en,*">Gerrymandering: drawing different maps<tspan x="0" dy="11">for electoral districts produces different outcomes</tspan></text>
+    </switch>
+    <switch transform="translate(8 86.7)">
+      <text systemLanguage="fr">50 circonscriptions<tspan x="0" dy="11">60 % bleu</tspan><tspan x="0" dy="11">40 % jaune</tspan></text>
+      <text systemLanguage="en,*">50 Precincts<tspan x="9" dy="11">60% Blue</tspan><tspan x="9" dy="11">40% Yellow</tspan></text>
+    </switch>
+    <switch transform="translate(35 248)" text-anchor="middle">
+      <text systemLanguage="fr">50 circonscriptions<tspan x="0" dy="10">doivent être</tspan><tspan x="0" dy="10">réparties</tspan><tspan x="0" dy="10">en</tspan><tspan x="0" dy="10">5 districts,</tspan><tspan x="0" dy="10">10 circonscriptions</tspan><tspan x="0" dy="10">par district.</tspan></text>
+      <text systemLanguage="en,*">50 Precincts<tspan x="0" dy="10">are to be</tspan><tspan x="0" dy="10">apportioned</tspan><tspan x="0" dy="10">into</tspan><tspan x="0" dy="10">5 districts,</tspan><tspan x="0" dy="10">10 precincts</tspan><tspan x="0" dy="10">per district.</tspan></text>
+    </switch>
+    <switch transform="translate(138 42)" font-weight="700" text-anchor="middle">
+      <text systemLanguage="fr">Résultats disproportionnés<tspan x="0" dy="11">"gerrymandering"</tspan></text>
+      <text systemLanguage="en,*">Disproportionate Outcomes<tspan x="0" dy="11">"gerrymandering"</tspan></text>
+    </switch>
+    <switch transform="translate(77 176)">
+      <text systemLanguage="fr">5 DISTRICTS<tspan x="9" dy="10">5 bleus</tspan><tspan x="9" dy="10">0 jaune</tspan><tspan x="0" dy="11">Les bleus</tspan><tspan x="0" dy="10">gagnent tout.</tspan></text>
+      <text systemLanguage="en,*">5 DISTRICTS<tspan x="9" dy="10">5 Blue</tspan><tspan x="9" dy="10">0 Yellow</tspan><tspan x="0" dy="11">Blue wins all.</tspan><tspan x="0" dy="10"> </tspan></text>
+    </switch>
+    <switch transform="translate(147 176)">
+      <text systemLanguage="fr">5 DISTRICTS<tspan x="9" dy="10">3 jaune</tspan><tspan x="9" dy="10">2 bleus</tspan><tspan x="0" dy="11">Les jaunes gagnent</tspan><tspan x="0" dy="10">la majorité.</tspan></text>
+      <text systemLanguage="en,*"><tspan>5 DISTRICTS</tspan><tspan x="9" dy="10">3 Yellow</tspan><tspan x="9" dy="10">2 Blue</tspan><tspan x="0" dy="11">Yellow wins</tspan><tspan x="0" dy="10">majority.</tspan></text>
+    </switch>
+    <switch transform="translate(138 239)" font-weight="700" text-anchor="middle">
+      <text systemLanguage="fr">Résultats proportionnés</text>
+      <text systemLanguage="en,*">Proportionate Outcomes</text>
+    </switch>
+    <switch transform="translate(77 372)">
+      <text systemLanguage="fr">5 DISTRICTS<tspan x="9" dy="10">3 bleus</tspan><tspan x="9" dy="10">2 jaune</tspan></text>
+      <text systemLanguage="en,*">5 DISTRICTS<tspan x="9" dy="10">3 Blue</tspan><tspan x="9" dy="10">2 Yellow</tspan></text>
+    </switch>
+    <switch transform="translate(147 372)">
+      <text systemLanguage="fr">5 DISTRICTS<tspan x="9" dy="10">3 bleus</tspan><tspan x="9" dy="10">2 jaune</tspan></text>
+      <text systemLanguage="en,*">5 DISTRICTS<tspan x="9" dy="10">3 Blue</tspan><tspan x="9" dy="10">2 Yellow</tspan></text>
+    </switch>
+    <switch transform="translate(138 405)" text-anchor="middle">
+      <text systemLanguage="fr"><tspan>Les bleus et les jaunes gagnent</tspan><tspan x="0" dy="11">en proportion de leur vote.</tspan></text>
+      <text systemLanguage="en,*"><tspan>Blue and yellow win</tspan><tspan x="0" dy="11">in proportion to their voting.</tspan></text>
+    </switch>
+  </g>
+  <use xlink:href="#set" transform="translate(9 120.5)"/>
+  <use xlink:href="#set" transform="translate(77.5 61)"/>
+  <use xlink:href="#set" transform="translate(147.5 61)"/>
+  <use xlink:href="#set" transform="translate(77.5 256)"/>
+  <use xlink:href="#set" transform="translate(147.5 256)"/>
+  <g fill="none" stroke="#000" stroke-linejoin="round">
+    <path d="M10,30h193 M77.5,228h125"/>
+    <path d="m77.5,61h52.8v106.3h-52.8z m0,21.05h52.8 m-52.8,21.4h52.8 m-52.8,21.4h52.8 m-52.8,21.4h52.8"/>
+    <path d="m147.5,61h52.8v106.3h-52.8z m0,0h10.35v10.35h32.1v21.4h-32.1v10.7h-10.35z m52.8,53.15h-31.75v-10.7h21.4v-10.7 m10.7,21.4h-32.1v10.7h21.4v10.7 m-42.45,-10.7h10.35v10.7h32.1v21.4h-32.1v10.35h-10.35z"/>
+    <path d="m77.5,256h52.8v106.3h-52.8z m10.35,0v106.3 m10.7,-106.3v106.3 m10.7,-106.3v106.3 m10.7,-106.3v106.3"/>
+    <path d="m147.5,256h52.8v106.3h-52.8z m0,10.35h21.05v10.7h10.7v10.7h21.4 m-52.8,10.7h52.8 m-52.8,21.4h52.8 m-52.8,10.7h20.7v10.7h10.7v10.7h21.4"/>
+  </g>
+</svg>
