@@ -36,12 +36,14 @@ df <- read_csv("analysis_data")
 ## 
 <>
 ![Best Ohio maps](images/ohio_bests.png)
+(source: DavesRedistricting.org)
 </>
 
 ## 
 <>
 ![Ohio's illegal maps](images/ohio_current.png)
-</>
+(source: DavesRedistricting.org)
+
 
 ## Problem
 
