@@ -44,12 +44,22 @@ df <- read_csv("analysis_data")
 
 ## Terminology
 
+<<<<<<< HEAD
 -   Following the decennial census, each state is required by federal law to redraw their districts.
+=======
+- "Redistricting" - Following the decennial census, states redraw their districts
+
+- Each state has its own process for drawing new congressional districts after a census. Most states’ policies can fall into one of two groups: partisan or non-partisan.
+
+- The majority of states rely on legislatures, and thus the party in control at the state level, to draw the new districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commission.
+
+>>>>>>> e99f1c2ea36960b4c079bc7adfaa80ced0e0b17d
 
 -   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups: partisan or non-partisan.
 
 -   The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
 
+<<<<<<< HEAD
 -   Legislature
 
 -   Commission
@@ -57,6 +67,8 @@ df <- read_csv("analysis_data")
 -   Courts
 
 -   Exceptions (single-district states, etc)
+=======
+>>>>>>> e99f1c2ea36960b4c079bc7adfaa80ced0e0b17d
 
 ```{r}
 # ggplot(df) +
@@ -67,9 +79,21 @@ df <- read_csv("analysis_data")
 
 -   Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
 
+<<<<<<< HEAD
 -   Best and Lem (2021) analyzed data from 3 states with independent commissions and 4 states with other types of commissions in the 2010 redistricting, finding that three of seven commissions produced redistricting results benefiting one party.
 
 -   Non-partisan redistricting methods should lead to higher turnout.
+=======
+- Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
+
+- Best and Lem (2021) found that three of seven states analyzed favored a single party
+
+- Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
+
+Generally speaking, vote share should be close to seat share. If not, that's a serious anti-democratic issue
+
+
+>>>>>>> e99f1c2ea36960b4c079bc7adfaa80ced0e0b17d
 
 ## Research questions
 
