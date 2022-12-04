@@ -65,11 +65,11 @@ df <- read_csv("analysis_data")
 
 ## Terminology
 
-- Following the decennial census, each state is required by federal law to redraw their districts.
+- "Redistricting" - Following the decennial census, states redraw their districts
 
 - Each state has its own process for drawing new congressional districts after a census. Most states’ policies can fall into one of two groups: partisan or non-partisan.
 
-- The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
+- The majority of states rely on legislatures, and thus the party in control at the state level, to draw the new districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commission.
 
 
 
