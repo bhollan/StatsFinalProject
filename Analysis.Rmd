@@ -235,6 +235,44 @@ stargazer(legislature_regression, court_regression, type = "text")
 
 ### Vote shares
 
+This section adds the elections data, and performs basic cleaning/transformation to merge it with the previously made redistricting data frame. This produces a new data frame with district-level observations, and each row containing the number of votes for each candidate (Republican/Democrat/Other), as well as the redistricting method for that election.
+
+Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" party and required special handling.
+
+
+```{r}
+elec <- read.csv("./source_data/1976-2020-house.csv")
+
+votes <- elec %>%
+  filter(year >= 2002) %>%
+  mutate(party = ifelse(party == "REPUBLICAN", "REPUBLICAN",
+                 ifelse(party == "DEMOCRAT", "DEMOCRAT",
+                 ifelse(str_detect(party, "DEMOCRATIC-FARM"), "DEMOCRAT",
+                        "OTHER")))) %>%
+  group_by(year, state_po, district, party) %>%
+  summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
+  pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
+  left_join(redistricting, by = c("year"="Year", "state_po"="State"))
+
+votes
+```
+
+
+The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
+
+```{r}
+votes %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
+  mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
+  ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
+  geom_point(alpha = 0.1) +
+  scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  facet_wrap(~Drawn.by)
+```
+
+
+
 ### Proportion of states by institution
 
 
