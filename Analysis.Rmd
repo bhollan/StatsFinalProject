@@ -228,6 +228,18 @@ court_regression <- lm(turnout_perc ~ court + mid_term,
 stargazer(legislature_regression, court_regression, type = "text")
 
 ```
+```{r}
+drawnby_regression <- lm(turnout_perc ~ Drawn.by, data = changed_subset)
+
+stargazer(drawnby_regression, type = "text")
+```
+
+```{r}
+pred_prob <- ggpredict(model = drawnby_regression,
+                       terms =c("Drawn.by[all]"))
+
+pred_prob
+```
 
 
 
