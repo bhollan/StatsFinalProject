@@ -9,188 +9,112 @@ output: slidy_presentation
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-
 ```{r include=FALSE}
 library(tidyverse)
 df <- read_csv("analysis_data")
 ```
 
-## Problem
+## Topic
 
-- Investigating the affects of states' redistricting stance on voter turnout.
-
- - "Redistricting" in the US - normal, decennial process through states redraw the boundaries of  districts
-
- - Concerns about fairness (In a perfect world, the lines would be drawn in the fairest way possible. But even that is hard to measure and execute, depending on your version of "fair")
-
- - How the lines are drawn might influence election outcomes.(There is very little guidance and even fewer rules about what the line-drawing process is supposed to be, and the lines can easily be drawn to favor your party over the other.)
- 
-- Recent increase in partisan polarization, role of redistricting (The "guardrail" of democratic behavior usually meant moderate gains losses during redistricting, knowing your party might not be in power in 10 years. But recently, tactics have grown fiercely partisan in many cases).
-
-
-
-
-![Original Gerrymander](images/GerryManderCartoonMap.png)
+-   Investigating the affects of states' redistricting stance on voter turnout.
 
 ## 
-
-![Best Ohio maps](images/ohio_bests.png)
-(source: DavesRedistricting.org)
-
-
-## 
-
-![Ohio's illegal maps](images/ohio_current.png)
-(source: DavesRedistricting.org)
-
 
 ## Problem
 
-- Gerrymandering 
+-   "Redistricting" in the US - normal, decennial process through states redraw the boundaries of districts
 
-- Decennial census to apportion seats, redraw district lines
+-   redistricting processes can be manipulated through gerrymandering to suit their political parties best interest
 
-- Usually state legislatures. Fairness and using redistricting for political influence
-
-- Draw district maps in a way to win disproportionately.
-
-- Now states are moving towrds indepndent commissions and courts.
-
-- If district boundaries have made a district a sure seat for Dems, e.g. 
+-   Currently, many states are trying to combat this practice by transferring redistricting power from state legislatures to non-legislative institutions, or commissions
 
 ## 
 
-![Redistricting illustrated](images/DifferingApportionment.svg){width=35%}
+\#![Original Gerrymander](images/GerryManderCartoonMap.png)
 
+## 
+
+\#![Best Ohio maps](images/ohio_bests.png) (source: DavesRedistricting.org)
+
+## 
+
+\#![Ohio\'s illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
+
+![Redistricting illustrated](images/DifferingApportionment.svg){width="35%"}
 
 ## Terminology
 
-- Following the decennial census, each state is required by federal law to redraw their districts.
+-   Following the decennial census, each state is required by federal law to redraw their districts.
 
-- Each state has its own process for drawing new congressional districts after a census. Most states’ policies can fall into one of two groups: partisan or non-partisan.
+-   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups: partisan or non-partisan.
 
-- The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
+-   The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
 
+-   Legislature
 
+-   Commission
 
- - Legislature
- - Commission
- - Courts
- - Exceptions (single-district states, etc)
+-   Courts
 
- ```{r}
- # ggplot(df) +
- #    geom_waffle(aes(Drawn.by))
- ```
+-   Exceptions (single-district states, etc)
 
-
-
-
+```{r}
+# ggplot(df) +
+#    geom_waffle(aes(Drawn.by))
+```
 
 ##Background and Theory
 
+-   Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
 
+-   Best and Lem (2021) analyzed data from 3 states with independent commissions and 4 states with other types of commissions in the 2010 redistricting, finding that three of seven commissions produced redistricting results benefiting one party.
 
-- Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
-
-- Best and Lem (2021) analyzed data from 3 states with independent commissions and 4 states with other types of commissions in the 2010 redistricting, finding that three of seven commissions produced redistricting results benefiting one party.
-
-- Non-partisan redistricting methods should lead to higher turnout.
-
-
-
-
-
-
+-   Non-partisan redistricting methods should lead to higher turnout.
 
 ## Research questions
 
+-   
 
-- 1. Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
+    1.  Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
 
-- 2. Does the institution that draws the maps have a correlation with voter turnout?
+-   
 
-
-
-
-
+    2.  Does the institution that draws the maps have a correlation with voter turnout?
 
 ## Data Sources
 
-- **1. Congressional election data, 2000-2020**
-MIT Election Lab
-Level: Congressional District
+-   **1. Congressional election data, 2000-2020** MIT Election Lab Level: Congressional District
 
-- **2. Redistricting policies by state, 2000-2020**
-Loyola Law School
+-   **2. Redistricting policies by state, 2000-2020**
 
+-   via Loyola Law School
 
-- **3. US Census turnout**
-US Census Bureau: Voter registration and turnout, 1972-2020
+-   CSV file that includes information about how each state's method of redrawing electoral district lines
 
+-   columns include: state, seats, legal default, last drawn by, and control
 
-
-
-
-
+-   **3. US Census turnout** US Census Bureau: Voter registration and turnout, 1972-2020
 
 ## Data cleaning and merging
 
-- Election: Drop with states with only one district
+-   Election: Drop with states with only one district
 
-- Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
+-   Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
 
+-   Locating required tables nested within 'printer-friendly' excel sheet.
 
-- Locating required tables nested within 'printer-friendly' excel sheet.
-
-
--  Merge on State-year pairs.
-
-
+-   Merge on State-year pairs.
 
 ## Methods
 
-- Graphs
+-   Graphs
 
-- Regression 1: Turnout (pres/midterm)
+-   Regression 1: Turnout (pres/midterm)
 
-- Regression 2: Margins
-
+-   Regression 2: Margins
 
 ## Results - Turnout by time/institution
 
-
-
-
-
 ## Results
 
-- Regression
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-   Regression
