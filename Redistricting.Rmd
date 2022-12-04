@@ -1,0 +1,97 @@
+---
+title: "Redistricting"
+author: "Brian Holland, Brad Wayne, Kumar Himanshu, Grace Edna, Chuyuan Zhong"
+date: "12/4/2022"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r include=FALSE}
+library(tidyverse)
+df <- read_csv("analysis_data")
+```
+
+## Outline
+Investigating the affects of states' redistricting stance on voter turnout.
+
+
+
+- Brief overview
+- Data (source, processing, merging)
+- Results
+
+<center>
+![Original Gerrymander](images/GerryManderCartoonMap.png)
+</center>
+
+## 
+<center>
+![Best Ohio maps](images/ohio_bests.png)
+</center>
+
+## 
+<center>
+![Ohio's illegal maps](images/ohio_current.png)
+</center>
+
+## Expactation vs Reality
+
+"Redistricting" in the US is a normal, decennial process through which an individual state redraws the lines of the districts inside their state.
+
+In a perfect world, the lines would be drawn in the fairest way possible. But even that is hard to measure and execute, depending on your version of "fair".
+
+There is very little guidance and even fewer rules about what the line-drawing process is supposed to be, and the lines can easily be drawn to favor your party over the other.
+
+The "guardrail" of democratic behavior usually meant moderate gains losses during redistricting, knowing your party might not be in power in 10 years. But recently, tactics have grown fiercely partisan in many cases.
+
+## 
+<center>
+![Redistricting illustrated](images/DifferingApportionment.svg){width=35%}
+</center>
+
+## Terminology
+
+ - Legislature
+ - Commission
+ - Courts
+ - Exceptions (single-district states, etc)
+ <center>
+ ```{r}
+ # ggplot(df) +
+ #    geom_waffle(aes(Drawn.by))
+ ```
+</center>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
