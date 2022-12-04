@@ -19,23 +19,6 @@ df <- read_csv("analysis_data")
 
 - Investigating the affects of states' redistricting stance on voter turnout.
 
-
-<center>
-![Original Gerrymander](images/GerryManderCartoonMap.png)
-</center>
-
-## 
-<center>
-![Best Ohio maps](images/ohio_bests.png)
-</center>
-
-## 
-<center>
-![Ohio's illegal maps](images/ohio_current.png)
-</center>
-
-## Problem
-
  - "Redistricting" in the US - normal, decennial process through states redraw the boundaries of  districts
 
  - Concerns about fairness (In a perfect world, the lines would be drawn in the fairest way possible. But even that is hard to measure and execute, depending on your version of "fair")
@@ -44,10 +27,40 @@ df <- read_csv("analysis_data")
  
 - Recent increase in partisan polarization, role of redistricting (The "guardrail" of democratic behavior usually meant moderate gains losses during redistricting, knowing your party might not be in power in 10 years. But recently, tactics have grown fiercely partisan in many cases).
 
+
+
+<>
+![Original Gerrymander](images/GerryManderCartoonMap.png)
+</>
+
 ## 
-<center>
+<>
+![Best Ohio maps](images/ohio_bests.png)
+</>
+
+## 
+<>
+![Ohio's illegal maps](images/ohio_current.png)
+</>
+
+## Problem
+
+- gerrymandering - what is it?
+
+- decennial census to apportion seats, redraw district lines
+
+- Usually state legislatures. Fairness and using redistricting for political influence
+
+- Draw district maps in a way to win disproportionately.
+
+- Now states are moving towrds indepndent commissions and courts.
+
+- If district boundaries have made a district a sure seat for Dems, e.g. 
+
+## 
+<>
 ![Redistricting illustrated](images/DifferingApportionment.svg){width=35%}
-</center>
+</>
 
 ## Terminology
 
@@ -57,74 +70,101 @@ df <- read_csv("analysis_data")
 
 - The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
 
-- 
 
 
  - Legislature
  - Commission
  - Courts
  - Exceptions (single-district states, etc)
- <center>
+ <>
  ```{r}
  # ggplot(df) +
  #    geom_waffle(aes(Drawn.by))
  ```
-</center>
+<>
 
 
-</center>
+</>
 
-##Background
+##Background and Theory
 
-
-</center>
+<>
 
 - Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
 
 - Best and Lem (2021) analyzed data from 3 states with independent commissions and 4 states with other types of commissions in the 2010 redistricting, finding that three of seven commissions produced redistricting results benefiting one party.
 
-
-</center>
-
-
-##Theory
-
 - Non-partisan redistricting methods should lead to higher turnout.
 
 
-</center>
 
+
+
+
+<>
+## Research questions
+<>
+
+- 1. Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
+
+- 2. Does the institution that draws the maps have a correlation with voter turnout?
+
+</>
+
+
+<>
 
 ## Data Sources
 
+- **1. Congressional election data, 2000-2020**
+MIT Election Lab
+Level: Congressional District
 
-### 1. Congressional election data, 2000-2020
-- MIT Election Lab
-- Level: Congressional District
-
-### 2. Redistricting policies by state, 2000-2020
-- 
-
-### 3. US Census turnout
-
-</center>
+- **2. Redistricting policies by state, 2000-2020**
+Loyola Law School
 
 
-</center>
+- **3. US Census turnout**
+US Census Bureau: Voter registration and turnout, 1972-2020
+
+
+<>
+
+
+</>
 
 ## Data cleaning and merging
 
-- Drop with states with only one district
+- Election: Drop with states with only one district
 
-- [Redistricting cleaning]
-
-- 
+- Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
 
 
-</center>
+- Locating required tables nested within 'printer-friendly' excel sheet.
+
+
+-  Merge on State-year pairs.
+
+</>
+
+## Methods
+
+- Graphs
+
+- Regression 1: Turnout (pres/midterm)
+
+- Regression 2: Margins
+
+
+## Results - Turnout by time/institution
+</>
 
 
 
+
+## Results
+
+- Regression
 
 
 
