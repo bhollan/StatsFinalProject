@@ -90,16 +90,13 @@ df <- read_csv("analysis_data")
 ##Background and Theory
 
 
+- Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
 
-- Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
+- Best and Lem (2021) found that three of seven states analyzed favored a single party
 
-- Best and Lem (2021) analyzed data from 3 states with independent commissions and 4 states with other types of commissions in the 2010 redistricting, finding that three of seven commissions produced redistricting results benefiting one party.
+- Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
-- Non-partisan redistricting methods should lead to higher turnout.
-
-
-
-
+Generally speaking "vote share should be close to seat share"
 
 
 
