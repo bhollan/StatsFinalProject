@@ -78,13 +78,6 @@ df <- read_csv("analysis_data")
  - Courts
  - Exceptions (single-district states, etc)
 
- ```{r}
- # ggplot(df) +
- #    geom_waffle(aes(Drawn.by))
- ```
-
-
-
 
 
 ##Background and Theory
