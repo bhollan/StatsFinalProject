@@ -1,3 +1,22 @@
+I think part of the opening is a bit too distant from our research -- we're looking at the effects of redistricting, not how it's done or measures of fairness. After the intro though I like the direction. I have admittedly rehearsed an intro but I just do stuff like that obsessively and I am in no way committed to it. We could merge our ideas or I'd even be willing to write down a script for someone else to deliver. Would be happy to go over it on zoom Sunday as well.
+
+The way I see the intro going though:
+[Introduction slide/outline]
+- Briefly touch on our research topic, but quickly transition to a more basic overview of gerrymandering to provide context (keep in mind: it's an international audience)
+- Mention the census, redrawing the maps based on the results, and that it's traditionally done by state legislatures
+- Explain the lofty, ideal goal of redistricting
+- Explain the sad reality of redistricting, aka gerrymandering
+[slide(s) with basic gerrymandering examples, I absolutely love the DifferingApportionment.svg graphic]
+- Point to examples, explain the goal is winning a disproportionate number of seats relative to vote share
+[?possibly give real examples, like Utah and Maryland, with actual vote % vs seat %?]
+- Mention it's a problem, but completely legal
+- Introduce the concept of/movement towards non-partisan redistricting methods (courts, commissions)
+- Transition to talking about research, theory behind it, and introduce...
+[research questions]
+move on to data sources, data cleaning/merging, and results.
+
+
+
 [opening slide]
 Names
 Title
@@ -35,19 +54,20 @@ Redistricting is a process outlined in the constitution:
 Gerrymandering is drawing the lines with a certain intent (typically malicious, political movations).
 
 
+[Our research question]
+1. Do non-partisan redistricting methods lead to closer elections?
+2. Does a state's policy stance on redistricting affect voter turnout?
+(moved this ahead of introducing the data)
+
 [data]
 Census data records voter turnout per-state (as a percentage of registered voters)
 Loyola Law School has done the leg-work of compiling a dataset of state-by-state stances on redistricting policy.
++ Mention it has entries on court challenges, and that maps are actually drawn more often than once every 10 years
 
-
-[policy definitions]
+[policy definitions] (I think this should be in the intro)
 The typical state's method for drawing the lines is the party in power at the state legislature gets to draw the lines however they see fit.
 Others have a "commission" draw the lines, either assembled by one or both parties, or controlled by the state attorney general, or other manner. (Independent Commission or Policitian Commission)
 Still sometimes, there are disputes over the redistricting process and the courts take over and draw the lines instead (sometimes Federal court, sometimes State court).
-
-
-[Our research question]
-Does a state's policy stance on redistricting affect voter turnout?
 
 
 [spoiler alert]
