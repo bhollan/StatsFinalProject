@@ -29,27 +29,26 @@ df <- read_csv("analysis_data")
 
 
 
-<>
+
 ![Original Gerrymander](images/GerryManderCartoonMap.png)
-</>
 
 ## 
-<>
+
 ![Best Ohio maps](images/ohio_bests.png)
 (source: DavesRedistricting.org)
-</>
+
 
 ## 
-<>
+
 ![Ohio's illegal maps](images/ohio_current.png)
 (source: DavesRedistricting.org)
 
 
 ## Problem
 
-- gerrymandering - what is it?
+- Gerrymandering 
 
-- decennial census to apportion seats, redraw district lines
+- Decennial census to apportion seats, redraw district lines
 
 - Usually state legislatures. Fairness and using redistricting for political influence
 
@@ -60,9 +59,9 @@ df <- read_csv("analysis_data")
 - If district boundaries have made a district a sure seat for Dems, e.g. 
 
 ## 
-<>
+
 ![Redistricting illustrated](images/DifferingApportionment.svg){width=35%}
-</>
+
 
 ## Terminology
 
@@ -78,19 +77,19 @@ df <- read_csv("analysis_data")
  - Commission
  - Courts
  - Exceptions (single-district states, etc)
- <>
+
  ```{r}
  # ggplot(df) +
  #    geom_waffle(aes(Drawn.by))
  ```
-<>
 
 
-</>
+
+
 
 ##Background and Theory
 
-<>
+
 
 - Hayes and Mckee (2009; 2011) used precinct level election data for five states from 1992 to 2006, finding that the negative effects on participation are highest among African Americans.
 
@@ -103,18 +102,18 @@ df <- read_csv("analysis_data")
 
 
 
-<>
+
 ## Research questions
-<>
+
 
 - 1. Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
 
 - 2. Does the institution that draws the maps have a correlation with voter turnout?
 
-</>
 
 
-<>
+
+
 
 ## Data Sources
 
@@ -130,10 +129,10 @@ Loyola Law School
 US Census Bureau: Voter registration and turnout, 1972-2020
 
 
-<>
 
 
-</>
+
+
 
 ## Data cleaning and merging
 
@@ -147,7 +146,7 @@ US Census Bureau: Voter registration and turnout, 1972-2020
 
 -  Merge on State-year pairs.
 
-</>
+
 
 ## Methods
 
@@ -159,7 +158,7 @@ US Census Bureau: Voter registration and turnout, 1972-2020
 
 
 ## Results - Turnout by time/institution
-</>
+
 
 
 
