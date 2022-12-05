@@ -112,9 +112,6 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 -   Merge on State-year pairs.
 
-```{r cars, echo = TRUE}
-head(redist2)
-```
 
 ## Methods
 
