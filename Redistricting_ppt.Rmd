@@ -74,8 +74,9 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## State by State stance
 
-![US stance as of 2012](images/redist_map_2012.png){width=50%}
-
+<center>
+![US stance as of 2012](images/redist_map_2012.png){width=80%}
+</center>
 
 ## Background and Theory
 
@@ -122,16 +123,19 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 -   Regression 2: Margins
 
 ## Box plot - turnout percentage by stance
-![turnout box plot](images/boxplot.png){width=50%}
-
+<center>
+![turnout box plot](images/boxplot.png){width=70%}
+</center
 
 ## Results - Turnout by time/institution
 
 ## Results
 
 -   Regression
-![Regression results](images/regression results of midterm and presidential turnouts.png)
-
+<center>
+![Regression results](images/regression results of midterm and presidential turnouts.png){width=80%}
+</center>
 ## Margin
-
-![Party votes per party votes](images/points_votes.png){width=110%}
+<center>
+![Party votes per party votes](images/points_votes.png){width=100%}
+</center>
