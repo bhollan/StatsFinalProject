@@ -1,5 +1,5 @@
 ---
-title: "Redistricting"
+title: "Political Effects of Redistricting Methods"
 author: "Brian Holland, Brad Wayne, Kumar Himanshu, Grace Edna, Chuyuan Zhong"
 date: "12/4/2022"
 output: slidy_presentation
@@ -14,19 +14,21 @@ library(tidyverse)
 df <- read_csv("analysis_data")
 ```
 
-## Topic
+## Intro: Redistricting vs. Gerrymandering
 
--   Investigating the affects of states' redistricting stance on voter turnout.
+Redistricting:
 
-## 
+- Part of the constitution, designed to ensure fair representation
+- Based on results of decennial census
+- All states with more than 1 district redraw their maps
+ - Traditionally done by state legislatures
+ 
+Gerrymandering:
 
-## Problem
+- Almost as old as the constitution
+- Drawing districts in peculiar ways to gain political advantage
+- Party in power can entrench itself to maintain power
 
--   "Redistricting" in the US - normal, decennial process through states redraw the boundaries of districts
-
--   redistricting processes can be manipulated through gerrymandering to suit their political parties best interest
-
--   Currently, many states are trying to combat this practice by transferring redistricting power from state legislatures to non-legislative institutions, or commissions
 
 ## 
 
