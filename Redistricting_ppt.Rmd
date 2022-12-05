@@ -30,6 +30,10 @@ df <- read_csv("analysis_data")
 
 ## 
 
+\#![Redistricting illustrated](images/DifferingApportionment.svg){width="35%"}
+
+## 
+
 \#![Original Gerrymander](images/GerryManderCartoonMap.png)
 
 ## 
@@ -40,65 +44,53 @@ df <- read_csv("analysis_data")
 
 \#![Ohio\'s illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
 
-![Redistricting illustrated](images/DifferingApportionment.svg){width="35%"}
-
 ## Terminology
 
-- "Redistricting" - Following the decennial census, states redraw their districts
+-   "Redistricting" - Following the decennial census, states redraw their districts
 
-- Each state has its own process for drawing new congressional districts after a census. Most states’ policies can fall into one of two groups: partisan or non-partisan.
+-   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups:
 
-- The majority of states rely on legislatures, and thus the party in control at the state level, to draw the new districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commission.
+    -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
+    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
+-   There are 4 main institutions that can have redistricting power:
 
--   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups: partisan or non-partisan.
+    -   Legislature
+    -   Commission
+    -   Courts
+    -   Exceptions (single-district states, etc)
 
--   The majority of states rely on legislatures, and thus the party in control at the state level, to draw the news districts, with little oversight or judicial involvement. Other states have made laws that force the redistricting process to be done by an outside commision.
+## Background and Theory
 
--   Legislature
+-   Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
 
--   Commission
+-   Best and Lem (2021) found that three of seven states analyzed favored a single party
 
--   Courts
-
--   Exceptions (single-district states, etc)
-
-
-##Background and Theory
-
-
-- Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
-
-- Best and Lem (2021) found that three of seven states analyzed favored a single party
-
-- Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
+-   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
 Generally speaking, vote share should be close to seat share. If not, that's a serious anti-democratic issue
 
-
 ## Research questions
 
--   
+-   Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
 
-    1.  Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
-
--   
-
-    2.  Does the institution that draws the maps have a correlation with voter turnout?
+-   Does the institution that draws the maps have a correlation with voter turnout?
 
 ## Data Sources
 
--   **1. Congressional election data, 2000-2020** MIT Election Lab Level: Congressional District
+-   Congressional election data, 2000-2020
 
--   **2. Redistricting policies by state, 2000-2020**
+    -   via MIT Election Lab Level: Congressional District
 
--   via Loyola Law School
+-   Redistricting policies by state, 2000-2020
 
--   CSV file that includes information about how each state's method of redrawing electoral district lines
+    -   via Loyola Law School
+    -   CSV file that includes information about how each state's method of redrawing electoral district lines
+    -   columns include: state, seats, legal default, last drawn by, and control
 
--   columns include: state, seats, legal default, last drawn by, and control
+-   US Census turnout
 
--   **3. US Census turnout** US Census Bureau: Voter registration and turnout, 1972-2020
+    -   US Census Bureau: Voter registration and turnout, 1972-2020
 
 ## Data cleaning and merging
 
