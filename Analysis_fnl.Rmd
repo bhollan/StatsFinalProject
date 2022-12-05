@@ -1,0 +1,424 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Install/load libraries
+
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
+#install.packages('tidycensus')
+#install.packages('position_dodge')
+#library(position_dodge)
+library(scales)
+library(tidycensus)
+library(tidyverse)
+library(data.table)
+library(readxl)
+#install.packages('maps')
+library(maps)
+library(stargazer)
+#install.packages('R.utils')
+library(ggrepel)
+library(R.utils)
+library(ggpubr)
+library(arm)
+install.packages("coefplot")
+library(coefplot)
+
+#library(ggcoefstats)
+
+
+options(tigris_use_cache = TRUE)
+```
+
+
+# Load cleaned redistricting data
+
+This is the dataset which is the output of the data cleaning script.
+
+
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
+
+redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
+
+```
+
+# Download census data using API - state boundaries
+
+
+https://rconsortium.github.io/censusguide/r-packages-all.html
+
+https://walker-data.com/tidycensus/articles/spatial-data.html
+
+
+The following code uses the tidycensus package and the Census API to download data + shapefiles from the US Census.
+
+- Declare Census product ( decennial).
+
+- Get values for total population in 2010 (just for an example), by state. Get shapefiles by geometry=True
+
+- Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii. Convert state names to lowercase
+
+
+
+`################
+```{r}
+
+#Declare parameters - API key, variables, time
+
+census_api_key("2f1473c692f61175605ea04cbe2a9a1b41d5bf7c")
+
+yr_select <- c(2010)
+
+#call DF
+
+stpop <- get_decennial(geography = "state", 
+                        variables = "P003001", 
+                         geometry = TRUE,
+                        year = yr_select) %>% select(-variable) %>%
+  filter(NAME!="Puerto Rico", NAME!="Alaska", NAME!="Hawaii" )
+  
+stpop$NAME <- tolower(stpop$NAME) 
+
+
+###############################
+
+```
+
+#  Merge both dataframes
+
+Create a spatial dataframe by merging both datasets.
+
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
+
+
+election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
+
+
+```
+
+
+# Descriptive/graphical analysis
+
+## Graph 1: State redistricting policies
+
+We filter the dataframe to a single year, say, 2012. Then we use 'ggplot' with the 'geom_sf' function to make a choropleth map, by unordered categorical variable 'Drawn.by'. This variable includes a string indicating which type of redistricting policy was in effect in a state.
+
+
+
+```{r, warning=FALSE}
+
+
+
+#idvars = c("NAME", "GEOID", "geometry")
+
+# Visualization
+
+##Maps
+
+map2012 <- election_map %>% filter(Year==2012)
+
+## democratic votes
+
+redist_map <- map2012 %>% 
+  ggplot() + 
+  geom_sf(aes(fill=Drawn.by), color="black", size=0.1) +
+    geom_sf_text(aes(label = State), family = "Times", size = 2.6,
+               color = "black", alpha = 0.9, hjust = 0.5, vjust = 0.5,
+               label.padding = unit(0, "pt")) +
+  labs(title = "Redistricting policies in 2012")+
+  theme(plot.title =element_text(hjust=0.5, face="bold"), #moves title to the middle of graph, bolds it
+          text= element_text(family= "Times", size = )) +
+   scale_fill_manual(values = c("#80b1d3", "#ffffb3", "#98FB98", "#fb8072", "#8dd3c7" , "#436EEE"))
+redist_map
+#ggsave("./images/redist_map_2012.png", redist_map)
+```
+
+
+## Graph 2: Boxplot of average turnout
+
+
+The following makes a boxplot depicting level of turnout for all elections, categorised by the state's redistricting policy.
+
+``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+
+#Filter out single district states, and only till 2021.
+redist2 <- redist %>% filter(Drawn.by!="n/a") %>%
+  filter(Seats != 1,
+         Year < 2022)
+
+
+# Boxplot
+
+##Make a smaller DF of average turnout by redistricting policy
+turnout_by_drawnby <- redist2 %>%
+  group_by(Drawn.by) %>%
+  summarise(turnout_perc = mean(turnout_perc))
+
+#now make boxplot
+#TODO: add coloring same as US map coloring
+boxplt<- redist2 %>%
+  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
+  geom_boxplot() +
+    geom_text(data = turnout_by_drawnby,
+            aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 0)),
+            color = "red",
+            size = 3,
+            hjust = 0.5,
+            vjust = 0.5
+          #  position = position_dodge(width=1)
+            ) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+  coord_flip() +
+  labs(title = "Avg. Turnout from 2000-2020, by Category",
+       x = "",
+       y = "Percent of eligible voters who voted") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title = element_text(face =))
+
+#ggsave("./images/boxplot.png", boxplt)
+
+```
+
+
+
+## Graph 3: Lineplot of average turnout
+
+### a. By state
+
+``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+
+
+### By state
+election_map %>%
+  ggplot(aes(x=Year, y = turnout_perc, colour = State)) + 
+  geom_line(size = 0.5) + 
+  labs(title = "Dem and Rep voter turnout from 2000-2020", x = "year", y = "percentage of vote by party") + 
+  
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+
+### b. By redistricting policy
+
+``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+
+# Aggregate to institution
+inst_lineplt <- election_map %>% group_by(Drawn.by, Year) %>% summarise(avg_turnout = mean(turnout_perc)) %>% filter(Drawn.by!="n/a")
+
+lesscom <- inst_lineplt %>% filter(Drawn.by %in% c("State court", "Federal court", "Legislature", "Independent commission"))
+
+lineplt <- lesscom  %>%
+   ggplot(aes(x=Year, y = avg_turnout, colour = Drawn.by)) + 
+  geom_line(size = .7) + 
+  labs(title = "Avg. Turnout percentage 2000-2020, by redistricting ", x = "year", y = "Turnout percentage") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+a2 <- ggplotly(lineplt)
+a2
+lineplt
+#ggsave("./images/lineplt_trn.html", lineplt)
+
+```
+
+
+
+  
+# Regression model: Ordinary Least Squares
+
+We run three regression models with the same basic model.
+
+## Model 1: Full-sample, Midterm dummy
+
+Our main independent variable derives from the 'Institution' or 'Drawn.By' columns. For the first set of OLS results, we run three models.
+
+ $y_{i} = \beta_0 + \beta_1 Policy_{i} + \beta_2 Midterm_{i} + \epsilon_{i}$
+ 
+``` {r}
+
+turn_reg_all <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist2)
+
+```
+ 
+## Model 2: Midterms vs Presidential sample, no midterm dummy
+
+Run the above model without the midterm dummy, separately for midterm elections and presidential elections. We use the 'mid_term' indicator variable generated.
+
+ $y_{i} = \beta_0 + \beta_1 Policy_{i} + \epsilon_{i}$
+
+``` {r}
+
+#Subset to midterms, and estimate the model
+redist_mid <- redist2 %>% filter(mid_term==1)
+Midterm <- lm(turnout_perc ~ Drawn.by+ mid_term, data = redist_mid)
+
+#Subset to Presidential elections, and estimate the model
+
+redist_pres <- redist2 %>% filter(mid_term==0)
+Presidential <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist_pres)
+
+```
+
+## OLS Regression: Results
+
+### Estimates table
+
+We use stargazer to generate a formatted table of the regression coefficients for the three estimates models.
+
+``` {r, results='asis'}
+
+stargazer(turnout_regression, mid, pres, type ="html")
+
+```
+
+
+### Graph 4: Coefficient plot
+
+Use models 2 and 3 above to make a coefficient plot using the 'multiplot' package. It shows that the coefficient estimates are always more negative or less positive for midterms, compared to Presidential elections.
+
+``` {r}
+
+# Make a coefplot
+multiplot(Midterm, Presidential, intercept=FALSE)
+
+
+```
+
+
+# Regression model: Panel with fixed effects
+
+Estimating OLS models with panel data may lead to biased and imprecise estimates. The reasons for this:
+
+- Unobserved heterogeneity across states, which we don't control for due to omitted variables.
+
+- Errors might not be independent, i.e. they may be serially/autocorrelated across time. OLS regression model assumes that the errors are independent and identically distributed, but this assumption may not hold for panel data. When the errors are correlated across time for each district.
+
+We use the following panel regression model:
+
+
+$y_{it} = \beta_0 + \beta_1 Policy_{it} + \beta_2 state_i + \beta_3 year_t + \epsilon_{it}$
+
+Where $y_{it} =$ Turnout percentage for state i in year t
+      $x_{it} =$ Binary variable for policy (court, legislature~~ or partisan)
+      $state_i =$ State fixed effects
+      $year_t =$ Year fixed effects
+      $\epsilon_{it} =$ Error term
+      
+      
+We use the R plm package
+      
+
+We use the three binary variables generated to indicate the state's redistricting policy
+
+2. Get dummies for each category (court, legislature, independent etc)
+
+   Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
+
+
+```{r, results=asis}
+
+library(plm)
+
+plm1 <- plm(turnout_perc ~ partisan + mid_term, data=redist2, index=c("State", "Year"), model="within", effect = "twoways")
+plm2 <- plm(turnout_perc ~ legislature + mid_term, data=redist2, index=c("State", "Year"), model="within")
+plm3 <- plm(turnout_perc ~ court, data=redist2, index=c("State", "Year"),
+            model="within", effect = "twoways")
+
+stargazer(plm1, plm3,  type='text',
+add.lines=list(c('State fixed effects', 'Yes','Yes'),  c('Year fixed effects', 'Yes','Yes')))
+```
+
+
+
+## Part - 2: Analysis of vote shares
+
+### Vote shares
+
+This section adds the elections data, and performs basic cleaning/transformation to merge it with the previously made redistricting data frame. This produces a new data frame with district-level observations, and each row containing the number of votes for each candidate (Republican/Democrat/Other), as well as the redistricting method for that election.
+
+Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" party and required special handling.
+
+
+```{r}
+elec <- read.csv("./source_data/1976-2020-house.csv")
+
+votes <- elec %>%
+  filter(year >= 2002) %>%
+  mutate(party = ifelse(party == "REPUBLICAN", "REPUBLICAN",
+                 ifelse(party == "DEMOCRAT", "DEMOCRAT",
+                 ifelse(str_detect(party, "DEMOCRATIC-FARM"), "DEMOCRAT",
+                        "OTHER")))) %>%
+  group_by(year, state_po, district, party) %>%
+  summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
+  pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
+  left_join(redist, by = c("year"="Year", "state_po"="State"))
+
+votes
+```
+
+
+The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
+
+```{r}
+
+
+votes %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
+  mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
+  ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
+  geom_point(alpha = 0.1) +
+  scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  facet_wrap(~Drawn.by)
+```
+
+
+
+
+### Proportion of votes and margins
+
+
+Margins in states
+
+``` {r}
+
+# Dem share
+
+votes <- votes %>% 
+  mutate(dem_margin = 100*(DEMOCRAT-REPUBLICAN)/totalvotes)
+
+
+# Create a new data frame with the avg_margin values grouped by year and Drawn.by
+
+inst_lineplt <- votes %>% group_by(Drawn.by, year) %>% summarise(avg_margin = mean(dem_margin))
+
+
+inst_lineplt %>% 
+   ggplot(aes(x=year, y = avg_margin, colour = Drawn.by)) + 
+  geom_line(size = .7) + 
+  labs(title = "Vote share margins, by redistricting ", x = "year", y = "Dem Margin in (%)") +
+    
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+\
+
+
+
+
+```{r}
+vt1 <- votes %>% filter(Drawn.by=="Legislature") %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1)
+
+ggplot(data = vt1, aes(x = dem_margin)) +
+    geom_histogram(binwidth = 3) +
+    geom_vline(xintercept = 0, color = "black") +
+    labs(title = "Democratic vote margin (Legislature)",
+         x = "Margin (percent)",
+         y = "Frequency")
+```
+
