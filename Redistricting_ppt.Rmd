@@ -24,6 +24,7 @@ Redistricting:
 -   Traditionally done by state legislatures
 -   Generally speaking, vote share should be close to seat share
 
+</br>
 
 Gerrymandering:
 
@@ -78,14 +79,16 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ![US stance as of 2012](images/redist_map_2012.png){width=80%}
 </center>
 
-## Background and Theory
+## Background and Hypothesis
 
--   Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
+* Prior research showed evidence that partisan commissions produced unfair maps
+  -   Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
 
--   Best and Lem (2021) found that three of seven states analyzed favored a single party
+  -   Best and Lem (2021) found that three of seven states analyzed favored a single party
 
 -   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
+-   Our second hypothesis did not easily present a statistical method for testing
 
 ## Data Sources
 
@@ -116,11 +119,10 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## Methods
 
--   Graphs
+-   Explorations in Visualizations (across policy and time)
 
--   Regression 1: Turnout (presidential vs midterm elections)
+-   Regression on Turnout (presidential vs midterm elections) vs Policy
 
--   Regression 2: Margins
 
 ## Box plot - turnout percentage by stance
 <center>
@@ -137,4 +139,9 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ## Margin
 <center>
 ![Party votes per party votes](images/points_votes.png){width=100%}
+</center>
+
+## Margin
+<center>
+![Party vote margin histgram](images/Dem_margin_histogram.png){width=100%}
 </center>
