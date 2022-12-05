@@ -54,7 +54,9 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## 
 
-![Best Ohio maps](images/ohio_bests.png) (source: DavesRedistricting.org)
+![Best Ohio maps](images/ohio_bests.png)
+<br/>
+(source: DavesRedistricting.org)
 
 
 ## Terminology
@@ -76,7 +78,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ## State by State stance
 
 <center>
-![US stance as of 2012](images/redist_map_2012.png){width=80%}
+![US stance as of 2012](images/redist_map_2012.png){width=100%}
 </center>
 
 ## Background and Hypothesis
@@ -126,14 +128,13 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## Box plot - turnout percentage by stance
 <center>
-![turnout box plot](images/boxplot.png){width=70%}
+![turnout box plot](images/boxplot.png){width=60%}
 </center>
 
-## Results
+## Regression Results
 
--   Regression
 <center>
-![Regression results](images/regression results of midterm and presidential turnouts.png){width=80%}
+![Regression results](images/regression results of midterm and presidential turnouts.png){width=70%}
 </center>
 
 ## Margin
@@ -145,3 +146,9 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 <center>
 ![Party vote margin histgram](images/Dem_margin_histogram.png){width=100%}
 </center>
+
+## Future Research
+
+-  Include demographics
+
+-  Difference in difference
