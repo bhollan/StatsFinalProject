@@ -18,17 +18,16 @@ df <- read_csv("analysis_data")
 
 Redistricting:
 
-- Part of the constitution, designed to ensure fair representation
-- Based on results of decennial census
-- All states with more than 1 district redraw their maps
- - Traditionally done by state legislatures
- 
+-   Part of the constitution, designed to ensure fair representation
+-   Based on results of decennial census
+-   All states with more than 1 district redraw their maps
+-   Traditionally done by state legislatures
+
 Gerrymandering:
 
-- Almost as old as the constitution
-- Drawing districts in peculiar ways to gain political advantage
-- Party in power can entrench itself to maintain power
-
+-   Almost as old as the constitution
+-   Drawing districts in peculiar ways to gain political advantage
+-   Party in power can entrench itself to maintain power
 
 ## 
 
@@ -48,17 +47,21 @@ Gerrymandering:
 
 ## Terminology
 
--   "Redistricting" - Following the decennial census, states redraw their districts
+-   "Redistricting" - The redrawing of legislative district lines following the census in order to accommodate population shifts and keep districts as equal as possible.
 
 -   Each state has its own institution for drawing new congressional districts after a census:
+
     -   Legislature
+
     -   Commission (Politican, Independent)
+
     -   Courts (Federal, State)
+
     -   Exceptions (single-district states, etc)
 
     -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
-    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
+    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
 ## Background and Theory
 
@@ -101,6 +104,10 @@ Generally speaking, vote share should be close to seat share. If not, that's a s
 -   Locating required tables nested within 'printer-friendly' excel sheet.
 
 -   Merge on State-year pairs.
+
+```{r cars, echo = TRUE}
+head(redist2)
+```
 
 ## Methods
 
