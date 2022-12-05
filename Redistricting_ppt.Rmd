@@ -22,6 +22,8 @@ Redistricting:
 -   Based on results of decennial census
 -   All states with more than 1 district redraw their maps
 -   Traditionally done by state legislatures
+-   Generally speaking, vote share should be close to seat share
+
 
 Gerrymandering:
 
@@ -61,7 +63,7 @@ Gerrymandering:
 
     -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
 
-    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
+    -   Non-partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
 ## Background and Theory
 
@@ -71,7 +73,6 @@ Gerrymandering:
 
 -   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
-Generally speaking, vote share should be close to seat share. If not, that's a serious anti-democratic issue
 
 ## Research questions
 
