@@ -107,7 +107,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## Data cleaning and merging
 
--   Election: Drop with states with only one district
+-   Election: Drop with states with only one district (AK, DE, MT, ND, SD, VT, WY)
 
 -   Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
 
