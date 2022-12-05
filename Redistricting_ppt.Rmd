@@ -130,4 +130,8 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ## Results
 
 -   Regression
-![Regression results](images/regression results of midterm and presidential turnouts..png)
+![Regression results](images/regression results of midterm and presidential turnouts.png)
+
+## Margin
+
+![Party votes per party votes](images/points_votes.png)

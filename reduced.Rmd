@@ -299,7 +299,9 @@ votes %>%
   mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
   ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
   geom_point(alpha = 0.1) +
+  geom_line(data = data.frame(DEMOCRAT = c(0, 300000), REPUBLICAN = c(0, 300000))) +
   scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
   scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
   facet_wrap(~Drawn.by)
+# write comment: "Diagonal represents tipping point of victory towards party"
 ```
