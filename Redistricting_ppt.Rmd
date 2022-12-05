@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r include=FALSE}
 library(tidyverse)
-df <- read_csv("analysis_data")
+df <- read_csv("analysis_data.csv")
 ```
 
 ## Intro: Redistricting vs. Gerrymandering
