@@ -125,9 +125,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ## Box plot - turnout percentage by stance
 <center>
 ![turnout box plot](images/boxplot.png){width=70%}
-</center
-
-## Results - Turnout by time/institution
+</center>
 
 ## Results
 
@@ -135,6 +133,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 <center>
 ![Regression results](images/regression results of midterm and presidential turnouts.png){width=80%}
 </center>
+
 ## Margin
 <center>
 ![Party votes per party votes](images/points_votes.png){width=100%}

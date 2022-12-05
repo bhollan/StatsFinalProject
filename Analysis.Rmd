@@ -144,6 +144,7 @@ turnout_by_drawnby <- redist2 %>%
   summarise(turnout_perc = mean(turnout_perc))
 
 #now make boxplot
+#TODO: add coloring same as US map coloring
 boxplt<- redist2 %>%
   ggplot(aes(x = Drawn.by, y = turnout_perc)) +
   geom_boxplot() +
