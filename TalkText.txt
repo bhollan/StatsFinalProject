@@ -1,0 +1,99 @@
+I think part of the opening is a bit too distant from our research -- we're looking at the effects of redistricting, not how it's done or measures of fairness. After the intro though I like the direction. I have admittedly rehearsed an intro but I just do stuff like that obsessively and I am in no way committed to it. We could merge our ideas or I'd even be willing to write down a script for someone else to deliver. Would be happy to go over it on zoom Sunday as well.
+
+The way I see the intro going though:
+[Introduction slide/outline]
+- Briefly touch on our research topic, but quickly transition to a more basic overview of gerrymandering to provide context (keep in mind: it's an international audience)
+- Mention the census, redrawing the maps based on the results, and that it's traditionally done by state legislatures
+- Explain the lofty, ideal goal of redistricting
+- Explain the sad reality of redistricting, aka gerrymandering
+[slide(s) with basic gerrymandering examples, I absolutely love the DifferingApportionment.svg graphic]
+- Point to examples, explain the goal is winning a disproportionate number of seats relative to vote share
+[?possibly give real examples, like Utah and Maryland, with actual vote % vs seat %?]
+- Mention it's a problem, but completely legal
+- Introduce the concept of/movement towards non-partisan redistricting methods (courts, commissions)
+- Transition to talking about research, theory behind it, and introduce...
+[research questions]
+move on to data sources, data cleaning/merging, and results.
+
+
+
+[opening slide]
+Names
+Title
+Date
+Class
+
+[outline]
+Terminology / backdrop
+Data sources
+Data cleaning and merging
+Regression / Results
+
+
+[pervasive, global]
+This is a problem that affects many countries on every inhabited continent (and even Antarctica's lines are in dispute).
+
+
+[Redistricting is hard]
+GEOMETRY
+  Equal population
+  Contiguous
+  Compact
+  Minimal county / municipality splits
+EQUALITY
+  Competitive
+  Proportional
+  Minimal partisan gerrymandering (maximal "partisan symmetry")
+  Minimal racial gerrymandering (maximal voting power equality)
+All of these are fairly easy to measure, but choosing a balance and thresholds is a human process.
+
+
+[diff between RD and GM]
+Redistricting is a process outlined in the constitution:
+"Representatives and direct taxes shall be apportioned among the several states which may be included within this union, according to their respective numbers..." [Article I, section 2]
+Gerrymandering is drawing the lines with a certain intent (typically malicious, political movations).
+
+
+[Our research question]
+1. Do non-partisan redistricting methods lead to closer elections?
+2. Does a state's policy stance on redistricting affect voter turnout?
+(moved this ahead of introducing the data)
+
+[data]
+Census data records voter turnout per-state (as a percentage of registered voters)
+Loyola Law School has done the leg-work of compiling a dataset of state-by-state stances on redistricting policy.
++ Mention it has entries on court challenges, and that maps are actually drawn more often than once every 10 years
+
+[policy definitions] (I think this should be in the intro)
+The typical state's method for drawing the lines is the party in power at the state legislature gets to draw the lines however they see fit.
+Others have a "commission" draw the lines, either assembled by one or both parties, or controlled by the state attorney general, or other manner. (Independent Commission or Policitian Commission)
+Still sometimes, there are disputes over the redistricting process and the courts take over and draw the lines instead (sometimes Federal court, sometimes State court).
+
+
+[spoiler alert]
+It doesn't.
+
+
+[counts / years]
+states not involved
+counts of states in each group
+states that "flipped"
+GM is not new, but using computers for it is, plus it's statistically questionable to compare states beyond year 2000 because [REASONS??]
+
+
+[cleaning / merging]
+Reading in a CSV is infinitely simpler than having to extract only certain cells from only certain sheets in an Excel file.
+Our unit of analysis couldn't be just states or years, so we analyzed "elections" that took place in a certain year, in a certain state.
+Most of our difficulties came from one of these two aspects.
+
+
+[results]
+
+
+In the end, we found no statistically significant relationship between redistricting stance and voter turnout.
+
+
+[other work and future work]
+Princeton Gerrymandering Project
+Auto/Algorithmic Redistricting
+

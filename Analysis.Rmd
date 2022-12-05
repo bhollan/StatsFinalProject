@@ -20,8 +20,11 @@ library(stargazer)
 #install.packages('R.utils')
 library(ggrepel)
 
+<<<<<<< HEAD
 #library(ggcoefstats)
 
+=======
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 library(R.utils)
 options(tigris_use_cache = TRUE)
 ```
@@ -73,7 +76,11 @@ stpop$NAME <- tolower(stpop$NAME)
 
 ```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
+<<<<<<< HEAD
 redist <- read.csv("/Users/Chuyuan/Downloads/analysis_data.csv", stringsAsFactors = FALSE)
+=======
+redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 
 election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
@@ -126,9 +133,14 @@ map2012 %>%
 The following plots show that the average level of turnout 
 
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+<<<<<<< HEAD
 # this code uses the dataframe we use later in the script also
 redist2 <- redist %>% filter(Drawn.by!="n/a")
 
+=======
+
+# this code uses the dataframe we use later in the script also
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 redist_turn_short <- election_map %>%
   select(State, NAME, Year, Drawn.by, changed, Seats, turnout_perc,
          legislature, partisan, independent_commission, court, mid_term) %>%
@@ -149,20 +161,33 @@ redist_turn_short %>%
 
 
 # Boxplot
+<<<<<<< HEAD
 turnout_by_drawnby <- redist2 %>%
+=======
+turnout_by_drawnby <- redist_turn_short %>%
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
   group_by(Drawn.by) %>%
   summarise(turnout_perc = mean(turnout_perc))
 
 
+<<<<<<< HEAD
 redist2 %>%
   ggplot(aes(x = Drawn.by, y = turnout_perc)) +
   geom_boxplot() +
     geom_text(data = turnout_by_drawnby,
             aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 0)),
+=======
+redist_turn_short %>%
+  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
+  geom_boxplot() +
+    geom_text(data = turnout_by_drawnby,
+            aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 2)),
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
             color = "red",
             size = 3,
             hjust = 0.5,
             vjust = 0.5,
+<<<<<<< HEAD
             position = position_dodge()
             ) +
   labs(title = "Boxplot of Turnout, by redistricting",
@@ -170,6 +195,15 @@ redist2 %>%
        y = "Turnout Percentage") +
   theme(plot.title = element_text(hjust = 0.5)) +
   coord_flip()
+=======
+          #  position = position_vdodge(height=0.5)
+            ) +
+  labs(title = "Turnout Percentage by Drawn By",
+       x = "Drawn By",
+       y = "Turnout Percentage") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
+        axis.title = element_text(face = "bold"))
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 
 # test for statistical differences in turnout percentage, across the levels of Drawn.by
@@ -261,6 +295,15 @@ Our main independent variable derives from the 'Institution' or 'Drawn.By' colum
 3. Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
 
 
+<<<<<<< HEAD
+=======
+``` {r}
+# not sure if it's appropriate to use state as a control
+turnout_regression <- lm(turnout_perc ~ Institution+mid_term,
+                         data = election_map)
+summary(turnout_regression)
+```
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 ## Subset to states which actually changed policies
 
@@ -274,13 +317,20 @@ redist_turn_short <- election_map %>%
   filter(Seats != 1,
          Year < 2022)
 
+<<<<<<< HEAD
 #redist_turn_short %>%
   #ggplot(aes(x = Drawn.by, y = turnout_perc)) +
   #geom_point()
+=======
+redist_turn_short %>%
+  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
+  geom_point()
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 changed_subset <- redist_turn_short %>%
   filter(changed == 1) 
 
+<<<<<<< HEAD
 court_regression <- lm(turnout_perc ~ court*mid_term,
                          data = changed_subset)
 
@@ -316,6 +366,15 @@ pres <- lm(turnout_perc ~ Drawn.by, data = redist_pres)
 stargazer(turn_reg_all, type ="text")
 stargazer(mid, pres, type ="text")
 #coefplot(turn_reg_all)
+=======
+legislature_regression <- lm(turnout_perc ~ legislature + mid_term,
+                         data = changed_subset)
+
+court_regression <- lm(turnout_perc ~ court + mid_term,
+                         data = changed_subset)
+
+stargazer(legislature_regression, court_regression, type = "text")
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 ```
 
@@ -326,10 +385,17 @@ stargazer(drawnby_regression, type = "text")
 ```
 
 ```{r}
+<<<<<<< HEAD
 #pred_prob <- ggpredict(model = drawnby_regression,
                        #terms =c("Drawn.by[all]"))
 
 #pred_prob
+=======
+pred_prob <- ggpredict(model = drawnby_regression,
+                       terms =c("Drawn.by[all]"))
+
+pred_prob
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 ```
 
 
@@ -344,7 +410,11 @@ Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" par
 
 
 ```{r}
+<<<<<<< HEAD
 elec <- read.csv("/Users/Chuyuan/Downloads/1976-2020-house.csv")
+=======
+elec <- read.csv("./source_data/1976-2020-house.csv")
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 votes <- elec %>%
   filter(year >= 2002) %>%
@@ -445,6 +515,7 @@ It is problematic to fit OLS regression models to panel data without controlling
 ```{r}
 
 # Fit a fixed-effects panel regression model to the panel data (district-year)
+<<<<<<< HEAD
 #library(plm)
 
 # Fit an OLS regression model to the panel data (district-year)
@@ -452,5 +523,14 @@ It is problematic to fit OLS regression models to panel data without controlling
                          #data = votes,
                          #model = "within")
 #summary(margin_regression)
+=======
+library(plm)
+
+# Fit an OLS regression model to the panel data (district-year)
+margin_regression <- plm(dem_margin ~ Drawn.by + mid_term + turnout_perc,
+                         data = votes,
+                         model = "within")
+summary(margin_regression)
+>>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 ```
 

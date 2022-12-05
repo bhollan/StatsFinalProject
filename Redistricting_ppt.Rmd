@@ -1,0 +1,117 @@
+---
+title: "Redistricting"
+author: "Brian Holland, Brad Wayne, Kumar Himanshu, Grace Edna, Chuyuan Zhong"
+date: "12/4/2022"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r include=FALSE}
+library(tidyverse)
+df <- read_csv("analysis_data")
+```
+
+## Topic
+
+-   Investigating the affects of states' redistricting stance on voter turnout.
+
+## 
+
+## Problem
+
+-   "Redistricting" in the US - normal, decennial process through states redraw the boundaries of districts
+
+-   redistricting processes can be manipulated through gerrymandering to suit their political parties best interest
+
+-   Currently, many states are trying to combat this practice by transferring redistricting power from state legislatures to non-legislative institutions, or commissions
+
+## 
+
+\#![Redistricting illustrated](images/DifferingApportionment.svg){width="35%"}
+
+## 
+
+\#![Original Gerrymander](images/GerryManderCartoonMap.png)
+
+## 
+
+\#![Best Ohio maps](images/ohio_bests.png) (source: DavesRedistricting.org)
+
+## 
+
+\#![Ohio\'s illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
+
+## Terminology
+
+-   "Redistricting" - Following the decennial census, states redraw their districts
+
+-   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups:
+
+    -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
+    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
+
+-   There are 4 main institutions that can have redistricting power:
+
+    -   Legislature
+    -   Commission
+    -   Courts
+    -   Exceptions (single-district states, etc)
+
+## Background and Theory
+
+-   Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
+
+-   Best and Lem (2021) found that three of seven states analyzed favored a single party
+
+-   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
+
+Generally speaking, vote share should be close to seat share. If not, that's a serious anti-democratic issue
+
+## Research questions
+
+-   Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
+
+-   Does the institution that draws the maps have a correlation with voter turnout?
+
+## Data Sources
+
+-   Congressional election data, 2000-2020
+
+    -   via MIT Election Lab Level: Congressional District
+
+-   Redistricting policies by state, 2000-2020
+
+    -   via Loyola Law School
+    -   CSV file that includes information about how each state's method of redrawing electoral district lines
+    -   columns include: state, seats, legal default, last drawn by, and control
+
+-   US Census turnout
+
+    -   US Census Bureau: Voter registration and turnout, 1972-2020
+
+## Data cleaning and merging
+
+-   Election: Drop with states with only one district
+
+-   Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
+
+-   Locating required tables nested within 'printer-friendly' excel sheet.
+
+-   Merge on State-year pairs.
+
+## Methods
+
+-   Graphs
+
+-   Regression 1: Turnout (pres/midterm)
+
+-   Regression 2: Margins
+
+## Results - Turnout by time/institution
+
+## Results
+
+-   Regression

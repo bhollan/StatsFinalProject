@@ -1,0 +1,138 @@
+---
+title: "margins"
+author: "Brad Wayne"
+date: "`r Sys.Date()`"
+output: html_document
+---
+```{r}
+library(tidyverse)
+```
+
+```{r}
+redistricting_raw <- read.csv("../source_data/StatesAndCyclesData.csv")
+elec <- read.csv("../source_data/1976-2020-house.csv")
+
+
+```
+
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
+# Reading, dropping the state-level data, and also filling in blanks in the
+# Drawn.by column with values from the Institution column as a substitute.
+# It is important to favor the Drawn.by column as it reflects court decisions.
+redistricting_raw <- redistricting_raw %>%
+  filter(Level == "Congress", Cycle.Year < 2020) %>%
+  mutate(Drawn.by = ifelse(Drawn.by == "", Institution,
+                    ifelse(Drawn.by == "n/a", Institution, Drawn.by)))
+
+
+# Identifying the states that had their maps redrawn due to legal challenges
+# This resulted in them having more than 3 maps (rows) over the period
+problem_states <- redistricting_raw %>%
+  count(State) %>%
+  filter(n > 2) %>%
+  select(State) %>%
+  pull(State)
+problem_states
+```
+
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
+# Manually creating a DF to pair redistricting cycles with election years
+# This will create a lot of extra cycle-year pairings for the aforementioned
+# problem states--pairing them with elections before the maps were drawn and
+# also after the maps were sent back to the legislature or redrawn by a court.
+cycle_pairs <- rbind(
+  data.frame(Cycle.Year = 2000, Year = c(2002, 2004, 2006, 2008, 2010)),
+  data.frame(Cycle.Year = 2010, Year = c(2012, 2014, 2016, 2018, 2020)))
+
+# Joining the dataframes, creating a dummy variable for year comparisons,
+# and filling in blank values for the dates with an arbitrary date (missing
+# data was causing errors for the difftime function)
+redistricting_joined <- full_join(redistricting_raw, cycle_pairs, by = "Cycle.Year") %>%
+  mutate(Election.Cutoff = paste(Year, "-11-01", sep = ""),
+         Start.Date = ifelse((Start.Date == "") & (Seats == 1), "2001-12-31", Start.Date),
+         End.Date = ifelse((End.Date == "") & (Seats == 1), "2001-12-31", End.Date))
+
+#view(redistricting_joined)
+
+# Finally putting the puzzle together/trimming the excess map-election pairs:
+# This...
+# 1. Identifies problem states (probably not even necessary, but being thorough)
+# 2. For problem states, finds the maps where:
+#     a. The start date for a map is after the election (not in effect yet), or
+#     b. the end date is before the election (superseded), then...
+# 3. Marks those maps as inactive == TRUE, to then be filtered out.
+redistricting <- redistricting_joined %>%
+  mutate(Inactive = ifelse(!(State %in% problem_states), F,
+                    ifelse(difftime(redistricting_joined$Start.Date, Election.Cutoff) > 0 |
+                           difftime(redistricting_joined$End.Date, Election.Cutoff) < 0, T, F))) %>%
+  filter(Inactive == FALSE)
+
+# identifying the states that changed their redistricting methods; adding it in
+redistricting_changes = redistricting %>%
+  group_by(State) %>%
+  summarize(redistricting_methods = n_distinct(Drawn.by)) %>%
+  mutate(changed = ifelse(redistricting_methods > 1, 1, 0))
+
+redistricting <- left_join(redistricting, redistricting_changes)
+
+# Example of what all this nonsense was for
+redistricting %>%
+  filter(State %in% problem_states) %>%
+  select(State, Drawn.by, Year, Start.Date, End.Date, changed)
+```
+
+```{r , echo=TRUE, message = FALSE, warning=FALSE}
+# Adding various dichotomous dummy variables (1 for mathces, 0 otherwise)
+# legislature: Drawn.by == "Legislature"
+# partisan: Drawn by legislature or politician commission
+# independent_commission: Drawn.by == "Independent commission"
+# court: Drawn.by contains "court"
+# midterm: Not a presidential election year
+#
+# to possibly add later:
+#   Whether or not the state had a US Senate election that year
+
+redistricting <- redistricting %>%
+  mutate(legislature = ifelse(Drawn.by == "Legislature", 1, 0),
+         partisan = ifelse((Drawn.by == "Legislature") |
+                           (Drawn.by == "Politician commission") , 1, 0),
+         independent_commission = ifelse(Drawn.by == "Independent commission", 1, 0),
+         court = ifelse(str_detect(tolower(Drawn.by), "court"), 1, 0),
+         mid_term = ifelse(Year %% 4 == 2, 1, 0))
+
+redistricting %>%
+  select(Year, State, Drawn.by, changed, legislature, partisan,
+         independent_commission, court, mid_term)
+
+# view(redistricting)
+```
+
+```{r}
+elec %>%
+  filter(str_detect(party, "DEMOCRATIC-FARM"))
+```
+
+```{r}
+elec %>%
+  filter(year >= 2002) %>%
+  mutate(party = ifelse(party == "REPUBLICAN", "REPUBLICAN",
+                 ifelse(party == "DEMOCRAT", "DEMOCRAT",
+                 ifelse(str_detect(party, "DEMOCRATIC-FARM"), "DEMOCRAT",
+                        "OTHER")))) %>%
+  group_by(year, state_po, district, party) %>%
+  summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
+  pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
+  left_join(redistricting, by = c("year"="Year", "state_po"="State")) %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
+  mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
+  #filter(Drawn.by == "Legislature") %>%
+  ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
+  geom_point(alpha = 0.1) +
+  scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  facet_wrap(~Drawn.by)
+
+```
+
+
+
