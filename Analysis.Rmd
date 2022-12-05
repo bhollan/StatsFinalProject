@@ -19,13 +19,10 @@ library(maps)
 library(stargazer)
 #install.packages('R.utils')
 library(ggrepel)
-
-<<<<<<< HEAD
+library(R.utils)
 #library(ggcoefstats)
 
-=======
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
-library(R.utils)
+
 options(tigris_use_cache = TRUE)
 ```
 
@@ -76,11 +73,7 @@ stpop$NAME <- tolower(stpop$NAME)
 
 ```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
-<<<<<<< HEAD
-redist <- read.csv("/Users/Chuyuan/Downloads/analysis_data.csv", stringsAsFactors = FALSE)
-=======
 redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
 
 
 election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
@@ -112,9 +105,9 @@ map2012 <- election_map %>% filter(Year==2012)
 
 ## democratic votes
 
-map2012 %>% 
+redist_map <- map2012 %>% 
   ggplot() + 
-  geom_sf(aes(fill=Drawn.by), color="black") +
+  geom_sf(aes(fill=Drawn.by), color="black", size=0.1) +
     geom_sf_text(aes(label = State), family = "Times", size = 2.6,
                color = "black", alpha = 0.9, hjust = 0.5, vjust = 0.5,
                label.padding = unit(0, "pt")) +
@@ -122,7 +115,8 @@ map2012 %>%
   theme(plot.title =element_text(hjust=0.5, face="bold"), #moves title to the middle of graph, bolds it
           text= element_text(family= "Times", size = )) +
    scale_fill_manual(values = c("#80b1d3", "#ffffb3", "#98FB98", "#fb8072", "#8dd3c7" , "#436EEE"))
-
+redist_map
+ggsave("./images/redist_map_2012.png", redist_map)
 ```
 
 
@@ -133,24 +127,51 @@ map2012 %>%
 The following plots show that the average level of turnout 
 
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
-<<<<<<< HEAD
-# this code uses the dataframe we use later in the script also
-redist2 <- redist %>% filter(Drawn.by!="n/a")
 
-=======
-
+library(ggpubr)
 # this code uses the dataframe we use later in the script also
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
-redist_turn_short <- election_map %>%
-  select(State, NAME, Year, Drawn.by, changed, Seats, turnout_perc,
-         legislature, partisan, independent_commission, court, mid_term) %>%
-  mutate(turnout_perc = turnout_perc / 100) %>%
+redist2 <- redist %>% filter(Drawn.by!="n/a") %>%
+  mutate(turnout_prop = turnout_perc / 100) %>%
   filter(Seats != 1,
          Year < 2022)
 
 
+# Boxplot
+
+##Make a smaller DF of average turnout by redistricting policy
+turnout_by_drawnby <- redist2 %>%
+  group_by(Drawn.by) %>%
+  summarise(turnout_perc = mean(turnout_perc))
+
+#now make boxplot
+boxplt<- redist2 %>%
+  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
+  geom_boxplot() +
+    geom_text(data = turnout_by_drawnby,
+            aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 0)),
+            color = "red",
+            size = 3,
+            hjust = 0.5,
+            vjust = 0.5
+          #  position = position_dodge(width=1)
+            ) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+  coord_flip() +
+  labs(title = "Avg. Turnout from 2000-2020, by Category",
+       x = "",
+       y = "Percent of eligible voters who voted") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title = element_text(face =))
+
+ggsave("./images/boxplot.png", boxplt)
+
+```
+
+
+
 # Dotplot or pointplot
-redist_turn_short %>%
+```{r}
+redist2 %>%
   ggplot(aes(x = Drawn.by, y = turnout_perc)) +
   geom_point(aes(color=turnout_perc)) +
   labs(title = "Turnout in Congressional elections, 2000-2020",
@@ -159,51 +180,10 @@ redist_turn_short %>%
   theme(plot.title = element_text(hjust = 0.5, face = "bold"),
         axis.title = element_text(face = "bold"))
 
-
-# Boxplot
-<<<<<<< HEAD
-turnout_by_drawnby <- redist2 %>%
-=======
-turnout_by_drawnby <- redist_turn_short %>%
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
-  group_by(Drawn.by) %>%
-  summarise(turnout_perc = mean(turnout_perc))
+```
 
 
-<<<<<<< HEAD
-redist2 %>%
-  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
-  geom_boxplot() +
-    geom_text(data = turnout_by_drawnby,
-            aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 0)),
-=======
-redist_turn_short %>%
-  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
-  geom_boxplot() +
-    geom_text(data = turnout_by_drawnby,
-            aes(x = Drawn.by, y = turnout_perc, label = round(turnout_perc, 2)),
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
-            color = "red",
-            size = 3,
-            hjust = 0.5,
-            vjust = 0.5,
-<<<<<<< HEAD
-            position = position_dodge()
-            ) +
-  labs(title = "Boxplot of Turnout, by redistricting",
-       x = "",
-       y = "Turnout Percentage") +
-  theme(plot.title = element_text(hjust = 0.5)) +
-  coord_flip()
-=======
-          #  position = position_vdodge(height=0.5)
-            ) +
-  labs(title = "Turnout Percentage by Drawn By",
-       x = "Drawn By",
-       y = "Turnout Percentage") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
-        axis.title = element_text(face = "bold"))
->>>>>>> 43c8b781b516aeba7a23598a7e02a24767a16a06
+```{r}
 
 
 # test for statistical differences in turnout percentage, across the levels of Drawn.by
@@ -215,7 +195,6 @@ aov_results <- aov(turnout_perc ~ Drawn.by, data = redist_turn_short)
 summary(aov_results)
 
 ```
-
 
 ## Turnout - lineplot thru time, by institution
 
@@ -235,14 +214,15 @@ election_map %>%
 inst_lineplt <- election_map %>% group_by(Institution, Year) %>% summarise(avg_turnout = mean(turnout_perc))
 
 
-inst_lineplt %>% 
+lineplt<-inst_lineplt %>% 
    ggplot(aes(x=Year, y = avg_turnout, colour = Institution)) + 
   geom_line(size = .7) + 
   labs(title = "Avg. Turnout percentage 2000-2020, by redistricing ", x = "year", y = "Turnout percentage") +
     
   theme(plot.title = element_text(hjust = 0.5))
 
-
+library(plotly)
+ggplotly(lineplt)
 
 ```
 

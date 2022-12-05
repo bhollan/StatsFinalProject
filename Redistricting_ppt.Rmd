@@ -48,17 +48,15 @@ df <- read_csv("analysis_data")
 
 -   "Redistricting" - Following the decennial census, states redraw their districts
 
--   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups:
+-   Each state has its own institution for drawing new congressional districts after a census:
+    -   Legislature
+    -   Commission (Politican, Independent)
+    -   Courts (Federal, State)
+    -   Exceptions (single-district states, etc)
 
     -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
     -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
--   There are 4 main institutions that can have redistricting power:
-
-    -   Legislature
-    -   Commission
-    -   Courts
-    -   Exceptions (single-district states, etc)
 
 ## Background and Theory
 
