@@ -47,9 +47,11 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## Research questions
 
-1.   Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
+1. Is there any statistically significant relationship between the redistricting institution and turnout in Congressional elections? Specifically, do partisan methods lead to lower turnout?
 
-2.   Is there a correlation between the institution that draws the maps and voter turnout?
+2. Do partisan redistricting methods lead to more lopsided races - larger vote margins?
+
+  
 
 
 ## 
@@ -75,7 +77,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 -   Partisan vs Non-partisan redistricting - State legislatures or third-parties have control and can arrange electoral districts
 
-## State by State stance
+## State-wise redistricting policies
 
 <center>
 ![US stance as of 2012](images/redist_map_2012.png){width=100%}
@@ -84,71 +86,160 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 ## Background and Hypothesis
 
 * Prior research showed evidence that partisan commissions produced unfair maps
-  -   Hayes and Mckee (2009; 2011) found strong effects in participation among black Americans
+  -   Hayes and Mckee (2009; 2011) found strong negative effects in participation among African Americans
 
-  -   Best and Lem (2021) found that three of seven states analyzed favored a single party
+  -   Best and Lem (2021) found that independent commissions (CA, WA) produced 'fairer' maps, compared to other commissions (AZ).
 
 -   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
--   Our second hypothesis did not easily present a statistical method for testing
+-   Our second hypothesis did not easily present a statistical method for testing.
 
 ## Data Sources
 
--   Congressional election data, 2000-2020
 
-    -   via MIT Election Lab Level: Congressional District
 
 -   Redistricting policies by state, 2000-2020
 
-    -   via Loyola Law School
-    -   CSV file that includes information about how each state's method of redrawing electoral district lines
+    -   Loyola Law School
+    -   State-level, information about each state's method of redrawing electoral district lines and dates
     -   columns include: state, seats, legal default, last drawn by, and control
 
 -   US Census turnout
 
     -   US Census Bureau: Voter registration and turnout, 1972-2020
+    -   State-level
+    
+-   Congressional election data, 2000-2020
+
+    -   MIT Election Lab Level
+    -   District-level, vote totals for each candidate/party
 
 ## Data cleaning and merging
 
--   Election: Drop with states with only one district (AK, DE, MT, ND, SD, VT, WY)
+-   Drop with states with only one district (AK, DE, MT, ND, SD, VT, WY). Restrict to 2000-2020 range.
 
--   Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
+-   Redistricting data: Identifying states that redrew their district maps between censuses.
 
--   Locating required tables nested within 'printer-friendly' spreadsheet
+-   Turnout: Locating required tables nested within 'printer-friendly' spreadsheet
 
--   Merge on State-year pairs
+-   Merge redistricting and turnout (one-to-one) on State-year pairs. Then merge this with district-votes
 
 
 ## Methods
 
--   Explorations in Visualizations (across policy and time)
+-   Visualization and descriptive analyses
 
--   Regression on Turnout (presidential vs midterm elections) vs Policy
+-   OLS Regression: Turnout on policy
+
+-   Panel regression: Include state and year fixed effects
 
 
 ## Box plot - turnout percentage by stance
+
+- Politician commission had the lowest mean. Next, legislature-drawn states saw the lowest turnout values.
+
+- The lowest values of turnout are seen for partisan mechanisms.
+
 <center>
-![turnout box plot](images/boxplot.png){width=60%}
+
+![Lineplot](images/boxplot.png){width=70%}
 </center>
 
-## Regression Results
+## Lineplot - trends through time
 
 <center>
-![Regression results](images/regression results of midterm and presidential turnouts.png){width=70%}
+
+![Lineplot](images/lineplt_turnout.png){width=70%}
 </center>
 
-## Margin
+
+## OLS Regression: Specification
+
+
+
+- For each observation (state-election), policy is an unordered categorical variable.
+
+- We run a model with all observations, and include a dummy variable for midterm years. 
+
+    $y_{i} = \beta_0 + \beta_1 Policy_{i} + \beta_2 Midterm_{i} + \epsilon_{i}$
+
+
+- We then run the model separately for each election type (midterms vs presidential), without the midterm dummy.
+
+## OLS Regression: Results
+
+<center>
+![Regression results](images/reg_tbl_1.png){width=70%}
+</center>
+
+- Lower turnout in midterms
+
+- Politician commission has the most negative, while State Court has the most positive effects.
+
+
+## OLS Regression: Results
+
+
+<center>
+
+![Reg coefplot](images/coefplot_mid_pres.png){width=70%}
+</center>
+
+
+## Panel regression: fixed effects
+
+- States and years have different characteristics that may affect the response variable (unobserved heterogeneity).
+
+- Observations are correlated over time, error terms will be autocorrelated. Idiosyncratic effects with time.
+
+- Panel model with fixed effects for the state and year variables.
+
+
+  $y_{it} = \beta_{i} + \beta_1 Policy_{it} +  \beta_2 year_t + \epsilon_{it}$ 
+  
+- Where \
+$y_{it} =$ Turnout percentage for state i in year t \
+$x_{it} =$ Binary variable for policy (court, legislature or partisan) \
+$\beta_{i} =$ Intercept/fixed effect for state i \
+$year_t =$ Intercept/fixed effect for year t \
+$\epsilon_{it} =$ Error term
+      
+      
+## Panel regression: results
+
+- Partisan redistricting mechanisms associated with lower turnout, court with higher. 
+
+- Robust to state and year effects.
+
+- Goodness of fit for fixed-effect models needs to be calculated separately. (Endsley 2016)
+
+
+<center>
+
+![Panel reg](images/plm_reg.png){width=100%}
+
+</center>
+
+## Exploring vote margins
+
+- The following plots Republican and Democratic Votes for each district from 2000-2020, faceted by redistricting policy of the state.
+
+- Clustering in legislature
 <center>
 ![Party votes per party votes](images/points_votes.png){width=100%}
 </center>
 
-## Margin
+## Vote margins: Distribution
+
+- We calculate the Democratic vote margin (in percent).
+
+- Plot histogram for states with Legislature redistricting.
 <center>
 ![Party vote margin histgram](images/Dem_margin_histogram.png){width=100%}
 </center>
 
 ## Future Research
 
--  Include demographics
+-  Control variables like demographics. 
 
--  Difference in difference
+-  Stronger causal inference methods, like difference-in-differences.

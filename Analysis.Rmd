@@ -5,6 +5,8 @@ output:
     df_print: paged
 ---
 
+
+
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 #install.packages('tidycensus')
 #install.packages('position_dodge')
@@ -190,7 +192,7 @@ redist2 %>%
 # test for statistical differences in turnout percentage, across the levels of Drawn.by
 
 # p-value =0.059, on the edge of 5% significance
-aov_results <- aov(turnout_perc ~ Drawn.by, data = redist_turn_short)
+aov_results <- aov(turnout_perc ~ Drawn.by, data = redist2)
 
 # Print the summary of the ANOVA results
 summary(aov_results)
@@ -212,18 +214,20 @@ election_map %>%
 
 
 # Aggregate to institution
-inst_lineplt <- election_map %>% group_by(Institution, Year) %>% summarise(avg_turnout = mean(turnout_perc))
+inst_lineplt <- election_map %>% group_by(Drawn.by, Year) %>% summarise(avg_turnout = mean(turnout_perc)) %>% filter(Drawn.by!="n/a")
 
+lesscom <- inst_lineplt %>% filter(Drawn.by %in% c("State court", "Federal court", "Legislature", "Independent commission"))
 
-lineplt<-inst_lineplt %>% 
-   ggplot(aes(x=Year, y = avg_turnout, colour = Institution)) + 
+lineplt <- lesscom  %>%
+   ggplot(aes(x=Year, y = avg_turnout, colour = Drawn.by)) + 
   geom_line(size = .7) + 
-  labs(title = "Avg. Turnout percentage 2000-2020, by redistricing ", x = "year", y = "Turnout percentage") +
-    
+  labs(title = "Avg. Turnout percentage 2000-2020, by redistricting ", x = "year", y = "Turnout percentage") +
   theme(plot.title = element_text(hjust = 0.5))
 
-library(plotly)
-ggplotly(lineplt)
+#a2 <- ggplotly(lineplt)
+a2
+lineplt
+#ggsave("./images/lineplt_trn.html", lineplt)
 
 ```
 
@@ -271,50 +275,7 @@ Our main independent variable derives from the 'Institution' or 'Drawn.By' colum
 
 1. Categorical/factor variable
 
-2. Get dummies for each category (court, legislature, independent etc)
 
-3. Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
-
-
-``` {r}
-# not sure if it's appropriate to use state as a control
-turnout_regression <- lm(turnout_perc ~ Institution+mid_term,
-                         data = election_map)
-summary(turnout_regression)
-```
-
-## Subset to states which actually changed policies
-
-
-```{r}
-
-redist_turn_short <- election_map %>%
-  select(State, NAME, Year, Drawn.by, changed, Seats, turnout_perc,
-         legislature, partisan, independent_commission, court, mid_term) %>%
-  mutate(turnout_perc = turnout_perc / 100) %>%
-  filter(Seats != 1,
-         Year < 2022)
-
-#redist_turn_short %>%
-  #ggplot(aes(x = Drawn.by, y = turnout_perc)) +
-  #geom_point()
-redist_turn_short %>%
-  ggplot(aes(x = Drawn.by, y = turnout_perc)) +
-  geom_point()
-
-changed_subset <- redist_turn_short %>%
-  filter(changed == 1) 
-
-court_regression <- lm(turnout_perc ~ court*mid_term,
-                         data = changed_subset)
-
-
-court_regression1 <- lm(turnout_perc ~ court* mid_term,
-                         data = redist2)
-
-stargazer(court_regression, court_regression1, type = "text")
-
-```
 
 
 ``` {r}
@@ -329,17 +290,48 @@ turn_reg_all <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist2)
 summary(turn_reg_all)
 #redist_mid
 
+redist2 <- redist %>% filter(Drawn.by!="n/a") %>%
+  mutate(turnout_prop = turnout_perc / 100) %>%
+  filter(Seats != 1,
+         Year < 2022)
+
+turnout_regression <- lm(turnout_perc ~ Drawn.by+mid_term,
+                         data = redist2)
+
 
 redist_mid <- redist2 %>% filter(mid_term==1)
-mid <- lm(turnout_perc ~ Drawn.by, data = redist_mid)
+Midterm <- lm(turnout_perc ~ Drawn.by+ mid_term, data = redist_mid)
 
 
 redist_pres <- redist2 %>% filter(mid_term==0)
-pres <- lm(turnout_perc ~ Drawn.by, data = redist_pres)
+Presidential <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist_pres)
 
-stargazer(turn_reg_all, type ="text")
-stargazer(mid, pres, type ="text")
-#coefplot(turn_reg_all)
+stargazer(turnout_regression, mid, pres, type ="text")
+
+
+# Make a coefplot
+
+library(arm)
+install.packages("coefplot")
+library(coefplot)
+
+
+multiplot(Midterm, Presidential, intercept=FALSE)
+
+
+```
+
+
+2. Get dummies for each category (court, legislature, independent etc)
+
+   Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
+
+
+
+```{r}
+
+
+
 legislature_regression <- lm(turnout_perc ~ legislature + mid_term,
                          data = changed_subset)
 
@@ -348,12 +340,20 @@ court_regression <- lm(turnout_perc ~ court + mid_term,
 
 stargazer(legislature_regression, court_regression, type = "text")
 
+
 ```
 
-```{r}
-drawnby_regression <- lm(turnout_perc ~ Drawn.by, data = changed_subset)
+```{r, results=asis}
 
-stargazer(drawnby_regression, type = "text")
+library(plm)
+
+plm1 <- plm(turnout_perc ~ partisan + mid_term, data=redist2, index=c("State", "Year"), model="within", effect = "twoways")
+plm2 <- plm(turnout_perc ~ legislature + mid_term, data=redist2, index=c("State", "Year"), model="within")
+plm3 <- plm(turnout_perc ~ court, data=redist2, index=c("State", "Year"),
+            model="within", effect = "twoways")
+
+stargazer(plm1, plm3,  type='text',
+add.lines=list(c('State fixed effects', 'Yes','Yes'),  c('Year fixed effects', 'Yes','Yes')))
 ```
 
 ```{r}
@@ -446,26 +446,6 @@ inst_lineplt %>%
 
 
 
-## OLS Regression - vote shares on policies
-
-
-
-library(tibble)
-library(tidyr)
-
-
-
-# Retrieve the Congressional district boundaries for all states in 2020
-cong_dist_boundaries <- get_decennial(geography = "cd",
-                                      variables = "P003001",
-                                      geometry = TRUE,
-                                      year = 2019)
-
-
-margin_regression <- lm(dem_margin ~ partisan+mid_term + turnout_perc ,
-                         data = votes)
-summary(margin_regression)
-
 ## Panel regression - vote shares on policies
 
 
@@ -476,26 +456,6 @@ It is problematic to fit OLS regression models to panel data without controlling
 2. You may get incorrect p-values for the coefficients of the independent variables. This is because the OLS regression model assumes that the error term is homoscedastic and normally distributed, but this assumption may not hold for panel data. When the error term is heteroscedastic or non-normal, the p-values calculated by the OLS regression model may be incorrect.
 
 3. You may get incorrect standard errors for the coefficients of the independent variables. This is because the OLS regression model assumes that the errors are independent and identically distributed, but this assumption may not hold for panel data. When the errors are correlated across time for each district.
-
-```{r}
-
-# Fit a fixed-effects panel regression model to the panel data (district-year)
-
-# Fit an OLS regression model to the panel data (district-year)
-#margin_regression <- plm(dem_margin ~ Drawn.by + mid_term + turnout_perc,
-                         #data = votes,
-                         #model = "within")
-#summary(margin_regression)
-
-library(plm)
-
-# Fit an OLS regression model to the panel data (district-year)
-margin_regression <- plm(dem_margin ~ Drawn.by + mid_term + turnout_perc,
-                         data = votes,
-                         model = "within")
-summary(margin_regression)
-
-```
 
 ```{r}
 vt1 <- votes %>% filter(Drawn.by=="Legislature") %>%
@@ -509,7 +469,15 @@ ggplot(data = vt1, aes(x = dem_margin)) +
          y = "Frequency")
 ```
 
+$y_{it} = \beta_0 + \beta_1 Policy_{it} + \beta_2 state_i + \beta_3 year_t + \epsilon_{it}$
 
+Where $y_{it} =$ Turnout percentage for state i in year t
+      $x_{it} =$ Binary variable for policy (court, legislature or partisan)
+      $state_i =$ State fixed effects
+      $year_t =$ Year fixed effects
+      $\epsilon_{it} =$ Error term
+      
+      
+where the units and time periods have different characteristics that may affect the response variable, and where the observations are correlated over time.
 
-
-
+The fixed effects for the state and year variables capture the unobserved heterogeneity and autocorrelation in the data
