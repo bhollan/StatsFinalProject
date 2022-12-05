@@ -216,7 +216,7 @@ $\epsilon_{it} =$ Error term
 
 <center>
 
-![Panel reg](images/plm_reg.png){width=100%}
+![Panel reg](images/plm_reg.png){width=50%}
 
 </center>
 
