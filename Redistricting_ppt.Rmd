@@ -27,17 +27,29 @@ Redistricting:
 
 Gerrymandering:
 
--   Almost as old as the constitution
+-   Almost as old as the constitution itself
 -   Drawing districts in peculiar ways to gain political advantage
 -   Party in power can entrench itself to maintain power
 
-## 
+## Gerrymandering Examples
 
-\#![Redistricting illustrated](images/DifferingApportionment.svg){width="35%"}
 
-## 
+<center>
 
-\#![Original Gerrymander](images/GerryManderCartoonMap.png)
+![](images/GerryManderCartoonMap.png)
+
+Example Districts (40% Yellow Voters, 60% Blue Voters):
+
+![](images/DifferingApportionment.png)
+
+</center>
+
+## Research questions
+
+1.   Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
+
+2.   Is there a correlation between the institution that draws the maps and voter turnout?
+
 
 ## 
 
@@ -45,7 +57,7 @@ Gerrymandering:
 
 ## 
 
-\#![Ohio\'s illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
+\#![Ohio's illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
 
 ## Terminology
 
@@ -73,12 +85,6 @@ Gerrymandering:
 
 -   Hypothesis: Nonpartisan redistricting methods should lead to higher turnout
 
-
-## Research questions
-
--   Do non-partisan redistricting methods lead to closer vote margins in Congressional elections?
-
--   Does the institution that draws the maps have a correlation with voter turnout?
 
 ## Data Sources
 
