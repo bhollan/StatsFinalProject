@@ -106,26 +106,23 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 -   **Hypothesis**: Nonpartisan redistricting methods - fairer maps - higher turnout
 
 
-## Data Sources  {.build}
+## Data Sources  
 
 
 - **Redistricting policies by state, 2000-2020**
 
--   Loyola Law School
--   State-level, information about each state's redistricting method 
++  Loyola Law School: information about each state's redistricting method 
 -   Variables: State, year, redistricting institution, date of adoption
 
 - **US Census - electoral turnout**
 
--   US Census Bureau: Voter registration and turnout, 1972-2020
--   State-level
+-   US Census Bureau: State-level voter registration and turnout
 -   Variables: Eligible voters in each election, Year
     
 - **Congressional election data, 2000-2020**
 
-    -   MIT Election Lab Level
-    -   District-level
-    -   Variables: vote totals for each candidate/party, year
+-   MIT Election Lab: District-level election results
+-   Variables: vote totals for each candidate/party, year
     
     
 
@@ -239,7 +236,7 @@ $\epsilon_{it} =$ Error term
 
 <center>
 
-![Panel reg](images/plm_reg.png){width=50%}
+![Table 2](images/plm_reg.png){width=50%}
 
 </center>
 
