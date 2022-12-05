@@ -36,7 +36,7 @@ Gerrymandering:
 
 <center>
 
-![](images/GerryManderCartoonMap.png)
+![](images/GerryManderCartoonMap.png){width=25% height=20%}
 
 Example Districts (40% Yellow Voters, 60% Blue Voters):
 
@@ -53,29 +53,32 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## 
 
-\#![Best Ohio maps](images/ohio_bests.png) (source: DavesRedistricting.org)
+![Best Ohio maps](images/ohio_bests.png) (source: DavesRedistricting.org)
 
 ## 
 
-\#![Ohio's illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
+![Ohio's illegal maps](images/ohio_current.png) (source: DavesRedistricting.org)
 
 ## Terminology
 
 -   "Redistricting" - The redrawing of legislative district lines following the census in order to accommodate population shifts and keep districts as equal as possible.
 
--   Each state has its own institution for drawing new congressional districts after a census:
+*   Each state has its own institution for drawing new congressional districts after a census:
 
-    -   Legislature
+    +   Legislature
 
-    -   Commission (Politican, Independent)
+    +   Commission (Politican, Independent)
 
-    -   Courts (Federal, State)
+    +   Courts (Federal, State)
 
-    -   Exceptions (single-district states, etc)
+    +   Exceptions (single-district states, etc)
 
-    -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
+-   Partisan vs Non-partisan redistricting - State legislatures or third-parties have control and can arrange electoral districts
 
-    -   Non-partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
+## State by State stance
+
+![US stance as of 2012](images/redist_map_2012.png)
+
 
 ## Background and Theory
 
@@ -108,18 +111,22 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 -   Redistricting data: (Identifying states that redrew their district maps between censuses to create state-year-drawing institution observations)
 
--   Locating required tables nested within 'printer-friendly' excel sheet.
+-   Locating required tables nested within 'printer-friendly' spreadsheet
 
--   Merge on State-year pairs.
+-   Merge on State-year pairs
 
 
 ## Methods
 
 -   Graphs
 
--   Regression 1: Turnout (pres/midterm)
+-   Regression 1: Turnout (presidential vs midterm elections)
 
 -   Regression 2: Margins
+
+## Box plot - turnout percentage by stance
+![turnout box plot](images/boxplot.png)
+
 
 ## Results - Turnout by time/institution
 
