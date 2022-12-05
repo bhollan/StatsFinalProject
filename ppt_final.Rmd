@@ -5,14 +5,12 @@ author: "Brian Holland, Brad Wayne, Kumar H, Grace Jensen, Chuyuan Zhong"
 date: "2022-12-05"
 output:
   slidy_presentation:
-    incremental: yes
-  ioslides_presentation:
-    incremental: yes
+    incremental: no
 ---
 
 ## Intro: Redistricting vs. Gerrymandering {.build}
 
-> -   **Redistricting**:
+-   **Redistricting**:
 
 -   Part of the constitution, designed to ensure fair representation
 -   Based on results of decennial census
@@ -22,7 +20,7 @@ output:
 
 </br>
 
-> -   **Gerrymandering**:
+-   **Gerrymandering**:
 
 -   Almost as old as the constitution itself
 -   Drawing districts in peculiar ways to gain political advantage
@@ -32,7 +30,7 @@ output:
 
 <center>
 
-![](images/GerryManderCartoonMap.png){width="25%" height="20%"}
+![](images/GerryManderCartoonMap.png){width="25%"}
 
 Example Districts (40% Yellow Voters, 60% Blue Voters):
 
@@ -54,7 +52,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 \
 
--   **Do partisan redistricting methods lead to more lopsided races - larger vote margins?**
+-   **Do partisan redistricting methods lead to more lopsided races with larger vote margins?**
 
 ## Redistricting institutions: Types {.build}
 
@@ -114,7 +112,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 -   Variables: vote totals for each candidate/party, year
 
-## Data cleaning and merging {.build}
+## Data cleaning and Methods {.build}
 
 -   Drop with states with only one district (AK, DE, MT, ND, SD, VT, WY). Restrict to 2000-2020 range.
 
@@ -124,7 +122,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 -   **Merge** redistricting and turnout (one-to-one) on State-year pairs. Then merge this with district-votes
 
-## Methods
+## Data cleaning and Methods
 
 -   Visualization and descriptive analyses
 
@@ -166,7 +164,7 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 <center>![Fig. 4](images/coefplot_mid_pres.png){width="70%"}</center>
 
-> -   Politican commission associated with most negative coefficient. Effects more negative for midterms.
+-   Politican commission associated with most negative coefficient. Effects more negative for midterms.
 
 ## Panel regression: fixed effects {.build}
 
