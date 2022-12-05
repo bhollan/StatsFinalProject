@@ -31,6 +31,7 @@ Gerrymandering:
 
 ## Gerrymandering Examples
 
+
 <center>
 
 ![](images/GerryManderCartoonMap.png)
@@ -58,19 +59,21 @@ Example Districts (40% Yellow Voters, 60% Blue Voters):
 
 ## Terminology
 
--   "Redistricting" - Following the decennial census, states redraw their districts
+-   "Redistricting" - The redrawing of legislative district lines following the census in order to accommodate population shifts and keep districts as equal as possible.
 
--   Each state has its own process for drawing new congressional districts after a census. Most states' policies can fall into one of two groups:
-
-    -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
-    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
-
--   There are 4 main institutions that can have redistricting power:
+-   Each state has its own institution for drawing new congressional districts after a census:
 
     -   Legislature
-    -   Commission
-    -   Courts
+
+    -   Commission (Politican, Independent)
+
+    -   Courts (Federal, State)
+
     -   Exceptions (single-district states, etc)
+
+    -   Partisan redistricting - State legislatures have control and can arrange electoral districts in a way that benefits their party
+
+    -   Non- partisan redistricting - Electoral districts are drawn by a third party where membership is reserved for political independents
 
 ## Background and Theory
 
@@ -107,6 +110,10 @@ Generally speaking, vote share should be close to seat share. If not, that's a s
 -   Locating required tables nested within 'printer-friendly' excel sheet.
 
 -   Merge on State-year pairs.
+
+```{r cars, echo = TRUE}
+head(redist2)
+```
 
 ## Methods
 
