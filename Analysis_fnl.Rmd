@@ -315,7 +315,7 @@ redist_map
 ## Graph 2: Boxplot of average turnout
 
 
-The following makes a boxplot depicting level of turnout for all elections, categorised by the state's redistricting policy.
+The following makes a boxplot depicting level of turnout for all elections, categorised by the state's redistricting policy. It shows that politican commision has the lowest mean. Next, legislature-drawn states saw the lowest turnout values. Thus, the lowest values of turnout are seen by partisan mechanisms.
 
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
@@ -381,6 +381,8 @@ election_map %>%
 
 ### b. By redistricting policy
 
+Following lineplot shows the trends of average voter turnout percentages under each drawing institiution through 2000-2020. 
+
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
 # Aggregate to institution
@@ -392,7 +394,7 @@ lineplt <- lesscom  %>%
    ggplot(aes(x=Year, y = avg_turnout, colour = Drawn.by)) + 
   geom_line(size = .7) + 
   labs(title = "Avg. Turnout percentage 2000-2020, by redistricting ", x = "year", y = "Turnout percentage") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5, size = 11))
 
 lineplt
 #ggsave("./images/lineplt_trn.html", lineplt)
@@ -404,7 +406,7 @@ lineplt
   
 # Regression model: Ordinary Least Squares
 
-We run three regression models with the same basic model.
+We run three regression models at the midterm, presidential and overall levels using the same basic model.
 
 ## Model 1: Full-sample, Midterm dummy
 
@@ -441,11 +443,11 @@ Presidential <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist_pres)
 
 ### Estimates table
 
-We use stargazer to generate a formatted table of the regression coefficients for the three estimates models.
+We use stargazer to generate a formatted table of the regression coefficients for the three estimates models. The result shows that midterm has lower turnouts. Politican commission has the most negative significant effects, while state court has the most positive significant effects. 
 
 ``` {r, results='asis'}
 
-stargazer(turn_reg_all, Midterm, Presidential, type ="html")
+stargazer(turn_reg_all, Midterm, Presidential, column.labels = c("Overall", "Midterm", "Presidential"), type ="text")
 
 ```
 
@@ -502,8 +504,9 @@ plm2 <- plm(turnout_perc ~ legislature + mid_term, data=redist2, index=c("State"
 plm3 <- plm(turnout_perc ~ court, data=redist2, index=c("State", "Year"),
             model="within", effect = "twoways")
 
-stargazer(plm1, plm3,  type='text',
+stargazer(plm1, plm3, type='text',
 add.lines=list(c('State fixed effects', 'Yes','Yes'),  c('Year fixed effects', 'Yes','Yes')))
+plm1
 ```
 
 
