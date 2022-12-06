@@ -14,6 +14,7 @@ library(data.table)
 library(readxl)
 library(stargazer)
 library(scales)
+library(dplyr)
 
 options(tigris_use_cache = TRUE)
 
@@ -22,17 +23,8 @@ options(tigris_use_cache = TRUE)
 
 # redistricting and census voting
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
-redistricting_raw <- read.csv("./source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 
-elec <- read.csv("./source_data/1976-2020-house.csv", stringsAsFactors = FALSE)
-states <- elec %>%
-    mutate("state_full" = tolower(state)) %>%
-    select("state_full", "state_po") %>%
-    distinct(state_full, state_po)
-
-```
 
 \
 
@@ -46,68 +38,70 @@ It is important to favor the Drawn.by column as it reflects court decisions.
 we also need to identify the states that had their maps redrawn due to legal challenges. This resulted in them having more than 3 maps (rows) over the period
 
 \
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
+
+
+#elec <- read.csv("./source_data/1976-2020-house.csv", stringsAsFactors = FALSE)
+
+
+```
+
+# Data Cleaning and Merging
+
+We worked with three separate data sets for our research project, which needed to be organized and merged to state-election year pairings for our analysis. Single district states were left in the data to be included for certain visualizations, but they would ultimately be dropped for most of the substantive analysis.
+
+## Redistricting Data
+
+This data set began as state-redistricting map pairings, tied to the original census year that maps were based on. A significant complicating factor, however, is that several states have map revisions as a result of court challenges, creating inconsistent numbers of pairings. Fortunately, the data also has columns denoting the years a given map was active, which could be used to associate an individual map with the elections where it was active. Since this data frame would be merged with both of our other data sets, this is also also the step where we added dichotomous dummy variables for use in later analysis.
+
+This was merged in several steps:
+1. Filtering out state house and state senate maps, as well as the 2020 congressional maps
+2. Filling in blank entries in the "Drawn.by" column with "Institution"
+3. Identifying states that have revised maps (specifically FL, NC, OH, PA, RI, TX, VA)
+4. Creating an additional data frame for pairing census cycles to election years
+5. Doing a full_join on the data frames to create all possible pairings
+6. Adding a dummy variable for November 1st of each year as a cutoff point to mark election dates
+7. Using the above to create another dummy variable to mark election year-map pairings where a map was inactive and filter them out
+8. Adding a dummy variable for which states used more than one redistricting method in the sample window
+9. Adding a variety of dichotomous dummy variables to identify different redistricting methods
+
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-# Reading, dropping the state-level data, and also filling in blanks in the
-# Drawn.by column with values from the Institution column as a substitute.
-# It is important to favor the Drawn.by column as it reflects court decisions.
+redistricting_raw <- read.csv("./source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
+
+# 1. Filtering out state house and state senate maps, as well as the 2020 congressional maps
+# 2. Filling in blank entries in the "Drawn.by" column with "Institution"
 redistricting_raw <- redistricting_raw %>%
   filter(Level == "Congress", Cycle.Year < 2020) %>%
   mutate(Drawn.by = ifelse(Drawn.by == "", Institution, Drawn.by))
 
-
-# Identifying the states that had their maps redrawn due to legal challenges
-# This resulted in them having more than 3 maps (rows) over the period
+# 3. Identifying states that have revised maps (FL, NC, OH, PA, RI, TX, VA)
 problem_states <- redistricting_raw %>%
   count(State) %>%
   filter(n > 2) %>%
   select(State) %>%
   pull(State)
-problem_states
-```
 
-\
-
-Finally putting the puzzle together/trimming the excess map-election pairs:
- This...
-1. Identifies problem states (probably not even necessary, but being thorough)
-2. For problem states, finds the maps where:
- a. The start date for a map is after the election (not in effect yet), or
- b. the end date is before the election (superseded)
-
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
-# Manually creating a DF to pair redistricting cycles with election years
-# This will create a lot of extra cycle-year pairings for the aforementioned
-# problem states--pairing them with elections before the maps were drawn and
-# also after the maps were sent back to the legislature or redrawn by a court.
+# 4. Creating an additional data frame for pairing census cycles to election years
 cycle_pairs <- rbind(
   data.frame(Cycle.Year = 2000, Year = c(2002, 2004, 2006, 2008, 2010)),
   data.frame(Cycle.Year = 2010, Year = c(2012, 2014, 2016, 2018, 2020)))
 
-# Joining the dataframes, creating a dummy variable for year comparisons,
-# and filling in blank values for the dates with an arbitrary date (missing
-# data was causing errors for the difftime function)
+# 5. Doing a full_join on the data frames to create all possible pairings
+# 6. Adding a dummy variable for November 1st of each year as a cutoff point to mark election dates
 redistricting_joined <- full_join(redistricting_raw, cycle_pairs, by = "Cycle.Year") %>%
   mutate(Election.Cutoff = paste(Year, "-11-01", sep = ""),
          Start.Date = ifelse((Start.Date == "") & (Seats == 1), "2001-12-31", Start.Date),
          End.Date = ifelse((End.Date == "") & (Seats == 1), "2001-12-31", End.Date))
 
-#view(redistricting_joined)
-
-# Finally putting the puzzle together/trimming the excess map-election pairs:
-# This...
-# 1. Identifies problem states (probably not even necessary, but being thorough)
-# 2. For problem states, finds the maps where:
-#     a. The start date for a map is after the election (not in effect yet), or
-#     b. the end date is before the election (superseded), then...
-# 3. Marks those maps as inactive == TRUE, to then be filtered out.
+# 7. Using the above to create another dummy variable to mark election year-map pairings where a map was inactive and filter them out
 redistricting <- redistricting_joined %>%
   mutate(Inactive = ifelse(!(State %in% problem_states), F,
                     ifelse(difftime(redistricting_joined$Start.Date, Election.Cutoff) > 0 |
                            difftime(redistricting_joined$End.Date, Election.Cutoff) < 0, T, F))) %>%
   filter(Inactive == FALSE)
 
-# identifying the states that changed their redistricting methods; adding it in
+# 8. Adding a dummy variable for which states used more than one redistricting method in the sample window
 redistricting_changes = redistricting %>%
   group_by(State) %>%
   summarize(redistricting_methods = n_distinct(Drawn.by)) %>%
@@ -115,23 +109,12 @@ redistricting_changes = redistricting %>%
 
 redistricting <- left_join(redistricting, redistricting_changes)
 
-# Example of what all this nonsense was for
+# Example showing the successful isolation of map revisions and accurate pairings
 redistricting %>%
   filter(State %in% problem_states) %>%
   select(State, Drawn.by, Year, Start.Date, End.Date, changed)
-```
 
-```{r , echo=TRUE, message = FALSE, warning=FALSE}
-# Adding various dichotomous dummy variables (1 for mathces, 0 otherwise)
-# legislature: Drawn.by == "Legislature"
-# partisan: Drawn by legislature or politician commission
-# independent_commission: Drawn.by == "Independent commission"
-# court: Drawn.by contains "court"
-# midterm: Not a presidential election year
-#
-# to possibly add later:
-#   Whether or not the state had a US Senate election that year
-
+# 9. Adding a variety of dichotomous dummy variables to identify different redistricting methods for later analysis
 redistricting <- redistricting %>%
   mutate(legislature = ifelse(Drawn.by == "Legislature", 1, 0),
          partisan = ifelse((Drawn.by == "Legislature") |
@@ -144,18 +127,37 @@ redistricting %>%
   select(Year, State, Drawn.by, changed, legislature, partisan,
          independent_commission, court, mid_term)
 
-# view(redistricting)
+```
+
+## Election results
+
+The MIT election lab data was more granular than necessary for our analysis, containing state-election year-district-candidate observations with vote totals for each candidate. It was aggregated to the district level, pivoted wider to create state-election year-district observations, and then merged with the redistricting data. Third party candidates were grouped as "OTHER" for the aggregation, and Minnesota's Democratic party was renamed to match the national party.
+
+```{r}
+elec <- read.csv("./source_data/1976-2020-house.csv")
+
+votes <- elec %>%
+  filter(year >= 2002) %>%
+  mutate(party = ifelse(party == "REPUBLICAN", "REPUBLICAN",
+                 ifelse(party == "DEMOCRAT", "DEMOCRAT",
+                 ifelse(str_detect(party, "DEMOCRATIC-FARM"), "DEMOCRAT",
+                        "OTHER")))) %>%
+  group_by(year, state_po, district, party) %>%
+  summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
+  pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
+  left_join(redistricting, by = c("year"="Year", "state_po"="State")) %>% 
+  mutate(dem_margin = 100*(DEMOCRAT-REPUBLICAN)/totalvotes)
+
+write.csv(votes, "votes_redistricting.csv", row.names=FALSE)
+votes
 ```
 
 \
 
-## Clean Election data 
-
-
+## Census Data 
+This data set contained State-election year-voter 
 Keep only for required span - 2000 to 2020
-
 Drop states with only one Congressional district. 
-
 Then, convert the party variable to have only three categories - Republican, Democrat and Other. Pivot to wide, and get vote totals and shares.
 
 
@@ -165,6 +167,10 @@ We import the relevant cells from the Excel sheets and merge them as needed.
 
 
 ```{r, echo=FALSE, messages=FALSE}
+states <- elec %>%
+    mutate("state_full" = tolower(state)) %>%
+    select("state_full", "state_po") %>%
+    distinct(state_full, state_po)
 
 # 2020 file has raw populations (others have only percentages)
 raw_2020 <- read_excel("./source_data/VoteAndRegByState2020.xlsx", range = "A7:E58")
@@ -267,29 +273,6 @@ court_regression2 <- lm(turnout_perc ~ court + mid_term,
 summary(court_regression2)
 ```
 
-### Vote shares
-
-This section adds the elections data, and performs basic cleaning/transformation to merge it with the previously made redistricting data frame. This produces a new data frame with district-level observations, and each row containing the number of votes for each candidate (Republican/Democrat/Other), as well as the redistricting method for that election.
-
-Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" party and required special handling.
-
-```{r}
-elec <- read.csv("./source_data/1976-2020-house.csv")
-
-votes <- elec %>%
-  filter(year >= 2002) %>%
-  mutate(party = ifelse(party == "REPUBLICAN", "REPUBLICAN",
-                 ifelse(party == "DEMOCRAT", "DEMOCRAT",
-                 ifelse(str_detect(party, "DEMOCRATIC-FARM"), "DEMOCRAT",
-                        "OTHER")))) %>%
-  group_by(year, state_po, district, party) %>%
-  summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
-  pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
-  left_join(redistricting, by = c("year"="Year", "state_po"="State"))
-
-votes
-```
-
 
 The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
 
@@ -305,3 +288,37 @@ votes %>%
   facet_wrap(~Drawn.by)
 # write comment: "Diagonal represents tipping point of victory towards party"
 ```
+```{r}
+
+
+
+# Create a new data frame with the avg_margin values grouped by year and Drawn.by
+
+inst_lineplt <- votes %>% group_by(Drawn.by, year) %>% summarise(avg_margin = mean(dem_margin))
+
+
+inst_lineplt %>% 
+   ggplot(aes(x=year, y = avg_margin, colour = Drawn.by)) + 
+  geom_line(size = .7) + 
+  labs(title = "Vote share margins, by redistricting ", x = "year", y = "Dem Margin in (%)") +
+    
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+\
+
+
+
+
+```{r}
+votes %>% filter(Drawn.by=="Legislature") %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
+  ggplot(aes(x = dem_margin)) +
+    geom_histogram(binwidth = 3) +
+    geom_vline(xintercept = 0, color = "black") +
+    labs(title = "Democratic vote margin (Legislature)",
+         x = "Margin (percent)",
+         y = "Frequency")
+```
+```
+
