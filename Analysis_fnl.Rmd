@@ -27,6 +27,7 @@ library(ggpubr)
 #install.packages("coefplot")
 library(coefplot)
 #library(dplyr)
+library(plotly)
 
 #library(ggcoefstats)
 
@@ -133,7 +134,7 @@ redistricting %>%
 
 The MIT election lab data was more granular than necessary for our analysis, containing state-election year-district-candidate observations with vote totals for each candidate. It was aggregated to the district level, pivoted wider to create state-election year-district observations, and then merged with the redistricting data. Third party candidates were grouped as "OTHER" for the aggregation, and Minnesota's Democratic party was renamed to match the national party.
 
-```{r}
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 elec <- read.csv("./source_data/1976-2020-house.csv")
 
 votes <- elec %>%
@@ -154,7 +155,7 @@ votes
 
 \
 
-## Census Data 
+## Census turnout Data 
 This data set contained State-election year-voter 
 Keep only for required span - 2000 to 2020
 Drop states with only one Congressional district. 
@@ -205,8 +206,9 @@ all_years_long <- all_years_long %>%
 ```
 
 
-# MERGE
-```{r}
+# Merge Census and redistricting data
+
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 redistricting <- left_join(redistricting, states,
                            by = c("State" = "state_po")) %>%
                  mutate(Cycle.Year = as.numeric(Cycle.Year),
@@ -237,7 +239,7 @@ The following code uses the tidycensus package and the Census API to download da
 
 
 `################
-```{r}
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
 #Declare parameters - API key, variables, time
 
@@ -267,7 +269,7 @@ Create a spatial dataframe by merging both datasets.
 ```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 
-election_map<-merge(stpop, redist, by.x = "NAME", by.y = "state_full" )
+election_map<-merge(stpop, redist_turn, by.x = "NAME", by.y = "state_full" )
 
 
 ```
@@ -318,7 +320,7 @@ The following makes a boxplot depicting level of turnout for all elections, cate
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
 #Filter out single district states, and only till 2021.
-redist2 <- redist %>% filter(Drawn.by!="n/a") %>%
+redist2 <- redist_turn %>% filter(Drawn.by!="n/a") %>%
   filter(Seats != 1,
          Year < 2022)
 
@@ -352,6 +354,7 @@ boxplt<- redist2 %>%
         axis.title = element_text(face =))
 
 #ggsave("./images/boxplot.png", boxplt)
+boxplt
 
 ```
 
@@ -391,8 +394,6 @@ lineplt <- lesscom  %>%
   labs(title = "Avg. Turnout percentage 2000-2020, by redistricting ", x = "year", y = "Turnout percentage") +
   theme(plot.title = element_text(hjust = 0.5))
 
-a2 <- ggplotly(lineplt)
-a2
 lineplt
 #ggsave("./images/lineplt_trn.html", lineplt)
 
@@ -411,7 +412,7 @@ Our main independent variable derives from the 'Institution' or 'Drawn.By' colum
 
  $y_{i} = \beta_0 + \beta_1 Policy_{i} + \beta_2 Midterm_{i} + \epsilon_{i}$
  
-``` {r}
+``` {r , echo=TRUE, message =FALSE, warning=FALSE}
 
 turn_reg_all <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist2)
 
@@ -423,7 +424,7 @@ Run the above model without the midterm dummy, separately for midterm elections 
 
  $y_{i} = \beta_0 + \beta_1 Policy_{i} + \epsilon_{i}$
 
-``` {r}
+``` {r , echo=TRUE, message =FALSE, warning=FALSE}
 
 #Subset to midterms, and estimate the model
 redist_mid <- redist2 %>% filter(mid_term==1)
@@ -444,7 +445,7 @@ We use stargazer to generate a formatted table of the regression coefficients fo
 
 ``` {r, results='asis'}
 
-stargazer(turnout_regression, mid, pres, type ="html")
+stargazer(turn_reg_all, Midterm, Presidential, type ="html")
 
 ```
 
@@ -453,7 +454,7 @@ stargazer(turnout_regression, mid, pres, type ="html")
 
 Use models 2 and 3 above to make a coefficient plot using the 'multiplot' package. It shows that the coefficient estimates are always more negative or less positive for midterms, compared to Presidential elections.
 
-``` {r}
+``` {r , echo=TRUE, message =FALSE, warning=FALSE}
 
 # Make a coefplot
 multiplot(Midterm, Presidential, intercept=FALSE)
@@ -492,7 +493,7 @@ We use the three binary variables generated to indicate the state's redistrictin
    Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
 
 
-```{r, results=asis}
+```{r, results='asis'}
 
 library(plm)
 
@@ -509,14 +510,14 @@ add.lines=list(c('State fixed effects', 'Yes','Yes'),  c('Year fixed effects', '
 
 ## Part - 2: Analysis of vote shares
 
-### Vote shares
+### Merge Vote share data
 
 This section adds the elections data, and performs basic cleaning/transformation to merge it with the previously made redistricting data frame. This produces a new data frame with district-level observations, and each row containing the number of votes for each candidate (Republican/Democrat/Other), as well as the redistricting method for that election.
 
 Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" party and required special handling.
 
 
-```{r}
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 elec <- read.csv("./source_data/1976-2020-house.csv")
 
 votes <- elec %>%
@@ -528,7 +529,7 @@ votes <- elec %>%
   group_by(year, state_po, district, party) %>%
   summarize(votes = sum(candidatevotes), totalvotes = mean(totalvotes)) %>%
   pivot_wider(names_from = party, values_from = votes, values_fill = 0) %>%
-  left_join(redist, by = c("year"="Year", "state_po"="State"))
+  left_join(redist2, by = c("year"="Year", "state_po"="State"))
 
 votes
 ```
@@ -536,7 +537,7 @@ votes
 
 The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
 
-```{r}
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
 
 votes %>%
@@ -557,7 +558,7 @@ votes %>%
 
 Margins in states
 
-``` {r}
+``` {r , echo=TRUE, message =FALSE, warning=FALSE}
 
 # Dem share
 
@@ -583,7 +584,7 @@ inst_lineplt %>%
 
 
 
-```{r}
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
 votes %>% filter(Drawn.by=="Legislature") %>%
   filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
   ggplot(aes(x = dem_margin)) +
