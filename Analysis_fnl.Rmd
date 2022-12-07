@@ -5,6 +5,13 @@ output:
     df_print: paged
 ---
 
+#  Datasets
+## Raw datasets:
+   1976-2020-house.csv, StatesAndCyclesData.csv, VoteAndRegByState2020.xlsx, VoteAndRegByStateHistory_prez_reg.xlsx, VoteAndRegByStateHistory_prez_vot.xlsx, VoteAndRegByStateHistory_congress.xlsx.
+## Final datasets: 
+   analysis_data.csv
+
+
 # Install/load libraries
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
@@ -237,8 +244,6 @@ The following code uses the tidycensus package and the Census API to download da
 - Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii. Convert state names to lowercase
 
 
-
-`################
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
 
 #Declare parameters - API key, variables, time
@@ -257,8 +262,6 @@ stpop <- get_decennial(geography = "state",
   
 stpop$NAME <- tolower(stpop$NAME) 
 
-
-###############################
 
 ```
 
@@ -362,24 +365,7 @@ boxplt
 
 ## Graph 3: Lineplot of average turnout
 
-### a. By state
-
-``` {r, echo=TRUE, message =FALSE, warning=FALSE}
-
-
-### By state
-election_map %>%
-  ggplot(aes(x=Year, y = turnout_perc, colour = State)) + 
-  geom_line(size = 0.5) + 
-  labs(title = "Dem and Rep voter turnout from 2000-2020", x = "year", y = "percentage of vote by party") + 
-  
-  theme(plot.title = element_text(hjust = 0.5))
-
-```
-
-
-
-### b. By redistricting policy
+###  By redistricting policy
 
 Following lineplot shows the trends of average voter turnout percentages under each drawing institiution through 2000-2020. 
 
