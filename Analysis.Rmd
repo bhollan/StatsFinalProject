@@ -1,9 +1,12 @@
 ---
-title: "R Notebook"
+title: "Redistricting project STATS PPOL 560"
 output:
   html_document:
     df_print: paged
 ---
+
+
+# Part-1 Cleaning
 
 #  Datasets
 ## Raw datasets:
@@ -13,9 +16,15 @@ output:
    VoteAndRegByStateHistory_prez_reg.xlsx
    VoteAndRegByStateHistory_prez_vot.xlsx
    VoteAndRegByStateHistory_congress.xlsx
-## Final datasets: 
-   votes_redistricting.csv
+   
+# Part-2 Analysis
+After cleaning and merging the above, we use two different dataframes for state-level and district-level analysis.
+We have uploaded:
+votes_redistricting.csv
 
+This dataframe will run some of the analysis here, but not all, due to some of the unit-level incongruities.
+All our source data is in our repository on GitHub here:
+https://github.com/bhollan/StatsFinalProject
 
 # Install/load libraries
 
@@ -306,7 +315,8 @@ We filter the dataframe to a single year, say, 2012. Then we use 'ggplot' with t
 
 ##Maps
 
-map2012 <- election_map %>% filter(Year==2012)
+map2012 <- election_map %>%
+  filter(Year==2012)
 
 ## democratic votes
 
@@ -333,7 +343,8 @@ The following makes a boxplot depicting level of turnout for all elections, cate
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
 #Filter out single district states, and only till 2021.
-redist2 <- redist_turn %>% filter(Drawn.by!="n/a") %>%
+redist2 <- redist_turn %>%
+  filter(Drawn.by!="n/a") %>%
   filter(Seats != 1,
          Year < 2022)
 
@@ -382,9 +393,13 @@ Following lineplot shows the trends of average voter turnout percentages under e
 ``` {r, echo=TRUE, message =FALSE, warning=FALSE}
 
 # Aggregate to institution
-inst_lineplt <- election_map %>% group_by(Drawn.by, Year) %>% summarise(avg_turnout = mean(turnout_perc)) %>% filter(Drawn.by!="n/a")
+inst_lineplt <- election_map %>% 
+  group_by(Drawn.by, Year) %>% 
+  summarise(avg_turnout = mean(turnout_perc)) %>% 
+  filter(Drawn.by!="n/a")
 
-lesscom <- inst_lineplt %>% filter(Drawn.by %in% c("State court", "Federal court", "Legislature", "Independent commission"))
+lesscom <- inst_lineplt %>% 
+  filter(Drawn.by %in% c("State court", "Federal court", "Legislature", "Independent commission"))
 
 lineplt <- lesscom  %>%
    ggplot(aes(x=Year, y = avg_turnout, colour = Drawn.by)) + 
@@ -538,7 +553,6 @@ votes
 The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
-
 
 votes %>%
   filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
