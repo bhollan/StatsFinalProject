@@ -13,5 +13,5 @@ Data Sources:
 
 
 
-Run the `Analysis.Rmd` file and it will output a fresh instance of the (pre-existing) `analysis_data.csv` file. That process pulls our downloaded sources from the `./source_data` folder. The `Redistricting.Rmd` file compiles our slides into HTML and pulls mostly from pre-existing files in the `/images` folder.
+Run the `Analysis.Rmd` file and it will output a fresh instance of the (pre-existing) `votes_redistricting.csv` file. That process pulls our downloaded sources from the `./source_data` folder. The `Redistricting.Rmd` file compiles our slides into HTML and pulls mostly from pre-existing files in the `/images` folder.
 

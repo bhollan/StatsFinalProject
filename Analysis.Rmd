@@ -7,9 +7,13 @@ output:
 
 #  Datasets
 ## Raw datasets:
-   1976-2020-house.csv, StatesAndCyclesData.csv, VoteAndRegByState2020.xlsx, VoteAndRegByStateHistory_prez_reg.xlsx, VoteAndRegByStateHistory_prez_vot.xlsx, VoteAndRegByStateHistory_congress.xlsx.
+   1976-2020-house.csv
+   StatesAndCyclesData.csv
+   VoteAndRegByState2020.xlsx
+   VoteAndRegByStateHistory_prez_reg.xlsx
+   VoteAndRegByStateHistory_prez_vot.xlsx
+   VoteAndRegByStateHistory_congress.xlsx
 ## Final datasets: 
-   analysis_data.csv
    votes_redistricting.csv
 
 
@@ -41,17 +45,6 @@ library(plotly)
 options(tigris_use_cache = TRUE)
 ```
 
-
-# Load cleaned redistricting data
-
-This is the data set which is the output of the data cleaning script.
-
-
-```{r , echo=TRUE, message=FALSE, warning=FALSE}
-
-#redist <- read.csv("./source_data/analysis_data.csv", stringsAsFactors = FALSE)
-
-```
 
 # Data Cleaning and Merging
 
