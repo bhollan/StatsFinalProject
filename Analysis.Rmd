@@ -64,8 +64,8 @@ This is the data set which is the output of the data cleaning.
 
 # All the necessary data to build our project is available publically on GitHub here:
 # https://github.com/bhollan/StatsFinalProject
-# 
-votes <- read.csv("./source_data/votes_redistricting.csv", stringsAsFactors = FALSE)
+
+# votes <- read.csv("./source_data/votes_redistricting.csv", stringsAsFactors = FALSE)
 
 ```
 
@@ -89,7 +89,7 @@ This was merged in several steps:
 9. Adding a variety of dichotomous dummy variables to identify different redistricting methods
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 redistricting_raw <- read.csv("./source_data/StatesAndCyclesData.csv", stringsAsFactors = FALSE)
 
 # 1. Filtering out state house and state senate maps, as well as the 2020 congressional maps
@@ -156,7 +156,7 @@ redistricting %>%
 
 The MIT election lab data was more granular than necessary for our analysis, containing state-election year-district-candidate observations with vote totals for each candidate. It was aggregated to the district level, pivoted wider to create state-election year-district observations, and then merged with the redistricting data. Third party candidates were grouped as "OTHER" for the aggregation, and Minnesota's Democratic party was renamed to match the national party.
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 elec <- read.csv("./source_data/1976-2020-house.csv")
 
 votes <- elec %>%
@@ -232,7 +232,7 @@ all_years_long <- all_years_long %>%
 
 # Merge Census and redistricting data
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 redistricting <- left_join(redistricting, states,
                            by = c("State" = "state_po")) %>%
@@ -262,7 +262,7 @@ The following code uses the tidycensus package and the Census API to download da
 - Subset to US mainland; filter out Alaska, Puerto Rico, Hawaii. Convert state names to lowercase
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 # Declare parameters - API key, variables, time
 # This API key is not an important secret. We had the `keyring` package working, but figured you didn't want to create your own API key to test things. We will likely delete this after grading is complete.
@@ -340,7 +340,7 @@ redist_map
 
 The following makes a boxplot depicting level of turnout for all elections, categorised by the state's redistricting policy. It shows that politican commision has the lowest mean. Next, legislature-drawn states saw the lowest turnout values. Thus, the lowest values of turnout are seen by partisan mechanisms.
 
-``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+``` {r, echo=TRUE, message=FALSE, warning=FALSE}
 
 #Filter out single district states, and only till 2021.
 redist2 <- redist_turn %>%
@@ -390,7 +390,7 @@ boxplt
 
 Following lineplot shows the trends of average voter turnout percentages under each drawing institiution through 2000-2020. 
 
-``` {r, echo=TRUE, message =FALSE, warning=FALSE}
+``` {r, echo=TRUE, message=FALSE, warning=FALSE}
 
 # Aggregate to institution
 inst_lineplt <- election_map %>% 
@@ -425,7 +425,7 @@ Our main independent variable derives from the 'Institution' or 'Drawn.By' colum
 
  $y_{i} = \beta_0 + \beta_1 Policy_{i} + \beta_2 Midterm_{i} + \epsilon_{i}$
  
-``` {r , echo=TRUE, message =FALSE, warning=FALSE}
+``` {r , echo=TRUE, message=FALSE, warning=FALSE}
 
 turn_reg_all <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist2)
 
@@ -437,7 +437,7 @@ Run the above model without the midterm dummy, separately for midterm elections 
 
  $y_{i} = \beta_0 + \beta_1 Policy_{i} + \epsilon_{i}$
 
-``` {r , echo=TRUE, message =FALSE, warning=FALSE}
+``` {r , echo=TRUE, message=FALSE, warning=FALSE}
 
 #Subset to midterms, and estimate the model
 redist_mid <- redist2 %>% filter(mid_term==1)
@@ -467,7 +467,7 @@ stargazer(turn_reg_all, Midterm, Presidential, column.labels = c("Overall", "Mid
 
 Use models 2 and 3 above to make a coefficient plot using the 'multiplot' package. It shows that the coefficient estimates are always more negative or less positive for midterms, compared to Presidential elections.
 
-``` {r , echo=TRUE, message =FALSE, warning=FALSE}
+``` {r , echo=TRUE, message=FALSE, warning=FALSE}
 
 # Make a coefplot
 multiplot(Midterm, Presidential, intercept=FALSE)
@@ -532,7 +532,7 @@ This section adds the elections data, and performs basic cleaning/transformation
 Note: Minnesota's Democratic party is known as the "Democratic-Farmer-Labor" party and required special handling.
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 elec <- read.csv("./source_data/1976-2020-house.csv")
 
 votes <- elec %>%
@@ -552,7 +552,7 @@ votes
 
 The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 
 votes %>%
   filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
@@ -572,7 +572,7 @@ votes %>%
 
 Margins in states
 
-``` {r , echo=TRUE, message =FALSE, warning=FALSE}
+``` {r , echo=TRUE, message=FALSE, warning=FALSE}
 
 # Dem share
 
@@ -597,7 +597,7 @@ inst_lineplt %>%
 
 
 
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
+```{r , echo=TRUE, message=FALSE, warning=FALSE}
 votes %>% filter(Drawn.by=="Legislature") %>%
   filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
   ggplot(aes(x = dem_margin)) +
