@@ -154,11 +154,11 @@ votes <- elec %>%
   left_join(redistricting, by = c("year"="Year", "state_po"="State")) %>% 
   mutate(dem_margin = 100*(DEMOCRAT-REPUBLICAN)/totalvotes)
 
-write.csv(votes, "votes_redistricting.csv", row.names=FALSE)
+write.csv(votes, "./votes_redistricting.csv", row.names=FALSE)
 votes
 ```
 
-\
+
 
 ## Census turnout Data 
 This data set contained State-election year-voter 
@@ -214,6 +214,7 @@ all_years_long <- all_years_long %>%
 # Merge Census and redistricting data
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
+
 redistricting <- left_join(redistricting, states,
                            by = c("State" = "state_po")) %>%
                  mutate(Cycle.Year = as.numeric(Cycle.Year),
@@ -566,7 +567,7 @@ inst_lineplt %>%
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
-\
+
 
 
 
