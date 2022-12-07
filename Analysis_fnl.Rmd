@@ -6,10 +6,18 @@ output:
 ---
 
 #  Datasets
-## Raw datasets:
-   1976-2020-house.csv, StatesAndCyclesData.csv, VoteAndRegByState2020.xlsx, VoteAndRegByStateHistory_prez_reg.xlsx, VoteAndRegByStateHistory_prez_vot.xlsx, VoteAndRegByStateHistory_congress.xlsx.
-## Final datasets: 
-   analysis_data.csv
+
+We begin with these 3 raw datasets.
+
+### 1. Congressional elections vote totals (1976-2020-house.csv
+
+### 2. Redistricting data (StatesAndCyclesData.csv)
+
+### 3. Voter turnout data (VoteAndRegByState2020.xlsx) 
+
+After cleaning and merging the three above, we get the final dataset:
+
+#### Final datasets (analysis_data.csv)
 
 
 # Install/load libraries
@@ -289,7 +297,6 @@ We filter the dataframe to a single year, say, 2012. Then we use 'ggplot' with t
 ```{r, warning=FALSE}
 
 
-
 #idvars = c("NAME", "GEOID", "geometry")
 
 # Visualization
@@ -431,9 +438,9 @@ Presidential <- lm(turnout_perc ~ Drawn.by + mid_term, data = redist_pres)
 
 We use stargazer to generate a formatted table of the regression coefficients for the three estimates models. The result shows that midterm has lower turnouts. Politican commission has the most negative significant effects, while state court has the most positive significant effects. 
 
-``` {r, results='asis'}
+``` {r, results='text'}
 
-stargazer(turn_reg_all, Midterm, Presidential, column.labels = c("Overall", "Midterm", "Presidential"), type ="text")
+stargazer(turn_reg_all, Midterm, Presidential, column.labels = c("Overall", "Mid", "Pres"), type ="text")
 
 ```
 
@@ -481,14 +488,21 @@ We use the three binary variables generated to indicate the state's redistrictin
    Make custom variables 'partisan'=1 or 0,  and categorize the above cases into it.
 
 
-```{r, results='asis'}
+```{r}
 
 library(plm)
 
-plm1 <- plm(turnout_perc ~ partisan + mid_term, data=redist2, index=c("State", "Year"), model="within", effect = "twoways")
+plm1 <- plm(turnout_perc ~ partisan + mid_term, data=redist2, index=c("State", "Year"),
+            model="within", effect = "twoways")
+
 plm2 <- plm(turnout_perc ~ legislature + mid_term, data=redist2, index=c("State", "Year"), model="within")
+
 plm3 <- plm(turnout_perc ~ court, data=redist2, index=c("State", "Year"),
             model="within", effect = "twoways")
+```
+\
+
+```{r, results='text'}
 
 stargazer(plm1, plm3, type='text',
 add.lines=list(c('State fixed effects', 'Yes','Yes'),  c('Year fixed effects', 'Yes','Yes')))
@@ -498,6 +512,7 @@ plm1
 
 
 ## Part - 2: Analysis of vote shares
+
 
 ### Merge Vote share data
 
@@ -523,29 +538,13 @@ votes <- elec %>%
 votes
 ```
 
-
-The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot).
-
-```{r , echo=TRUE, message =FALSE, warning=FALSE}
-
-
-votes %>%
-  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
-  mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
-  ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
-  geom_point(alpha = 0.1) +
-  scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
-  scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
-  facet_wrap(~Drawn.by)
-```
+\
 
 
 
+### Democratic vote share margins - Lineplot
 
-### Proportion of votes and margins
-
-
-Margins in states
+We plot lineplots of average voteshare margins through time, for each type of redistricting policy. We observe that legislature and politician commission states have the highest vote margins, and that margins have been creeping upwards throughout the period.
 
 ``` {r , echo=TRUE, message =FALSE, warning=FALSE}
 
@@ -570,7 +569,30 @@ inst_lineplt %>%
 ```
 \
 
+### Democratic vote margin - scatterplots
 
+The visualization filters the results to elections in states with more than one district, and also excludes races where a Democrat or Republican received zero votes (i.e. they were not on the ballot). The following scatterplots are faceted by states' redistricting policies, and plot Democratic vote counts on the X-axis and Republican vote counts on the Y-axis. The points represents district-elections.
+\
+We see that in the facet 'Legislature', there is a larger cluster of points away from the 45-degree diagonal line, which indicates points where both parties get equal votes. 
+
+```{r , echo=TRUE, message =FALSE, warning=FALSE}
+
+
+votes %>%
+  filter(DEMOCRAT > 0, REPUBLICAN > 0, Seats > 1) %>%
+  mutate(winner = ifelse(REPUBLICAN > DEMOCRAT, "Republican", "Democrat")) %>%
+  ggplot(aes(x = DEMOCRAT, y = REPUBLICAN)) +
+  geom_point(alpha = 0.1) +
+  scale_y_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  scale_x_continuous(labels = label_comma(suffix = "k", scale = 0.001), limits = c(0, 300000)) +
+  facet_wrap(~Drawn.by)
+```
+
+\
+
+### Democratic vote margin - Histogram
+
+The histogram depicts the distribution of district-wise democratic vote margins in all elections from 2000-2020, for states with legislative redistricting. The pattern from the above scatterplot becomes clearer. We see that it is a bimodal distribution, indicating that there are relatively fewer districts in the middle of the distribution, around 0 percent. These low margins would indicate very closely fought races. It implies that there are more elections which are being won by large margins, as high as 50%.
 
 
 ```{r , echo=TRUE, message =FALSE, warning=FALSE}
@@ -584,4 +606,5 @@ votes %>% filter(Drawn.by=="Legislature") %>%
          y = "Frequency")
 ```
 
+\
 
